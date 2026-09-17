@@ -13,11 +13,11 @@ interface Props {
 export function Hero({ title, subtitle, imageUrl, ctaHref = "/categorie/caftans" }: Props) {
   return (
     <section className="relative overflow-hidden">
-      <div className="relative aspect-[16/10] w-full md:aspect-[16/7]">
+      <div className="relative w-full">
         <img
           src={imageUrl}
           alt={title}
-          className="absolute inset-0 h-full w-full object-cover"
+          className="w-full h-auto object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/20 to-transparent" />
         <div className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center text-white">
