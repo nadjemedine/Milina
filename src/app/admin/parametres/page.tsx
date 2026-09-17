@@ -14,6 +14,7 @@ const FIELDS = [
   { key: "contact_address", label: "Adresse", type: "text" },
   { key: "instagram_url", label: "Instagram URL", type: "url" },
   { key: "facebook_url", label: "Facebook URL", type: "url" },
+  { key: "whatsapp_url", label: "WhatsApp URL (ex: https://wa.me/213xxxxxxxxx)", type: "url" },
   { key: "about_text", label: "Texte 'À propos'", type: "textarea" },
 ];
 
@@ -117,6 +118,34 @@ export default function AdminSettingsPage() {
                 onChange={(v) => setSettings({ ...settings, favicon_image: v })}
               />
             </div>
+          </div>
+
+          <div className="mt-8 border-t border-neutral-100 pt-6">
+            <h2 className="mb-4 font-serif text-xl font-bold">WhatsApp</h2>
+            <div className="flex items-center gap-4">
+              <label className="relative inline-flex cursor-pointer items-center">
+                <input
+                  type="checkbox"
+                  checked={settings["whatsapp_visible"] === "true"}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      whatsapp_visible: e.target.checked ? "true" : "false",
+                    })
+                  }
+                  className="peer sr-only"
+                />
+                <div className="peer h-6 w-11 rounded-full bg-neutral-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:shadow after:transition-all after:content-[''] peer-checked:bg-[#25D366] peer-checked:after:translate-x-full" />
+              </label>
+              <span className="text-sm text-neutral-700">
+                {settings["whatsapp_visible"] === "true"
+                  ? "Icône WhatsApp visible sur le site"
+                  : "Icône WhatsApp masquée"}
+              </span>
+            </div>
+            <p className="mt-2 text-xs text-neutral-400">
+              L&apos;icône flottante WhatsApp s&apos;affichera en bas à droite du site lorsqu&apos;elle est activée et qu&apos;une URL WhatsApp est configurée ci-dessus.
+            </p>
           </div>
 
           <div className="mt-6 flex items-center gap-3 border-t border-neutral-100 pt-5">

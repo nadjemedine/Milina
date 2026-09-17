@@ -47,6 +47,10 @@ export default async function RootLayout({
   return (
     <html lang="fr">
       <head>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+          rel="stylesheet"
+        />
         {typeof settings.favicon_image === "string" && settings.favicon_image && (
           <link rel="icon" href={settings.favicon_image} />
         )}

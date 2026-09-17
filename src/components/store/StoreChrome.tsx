@@ -1,6 +1,6 @@
 "use client";
 
-import { type ReactNode, useState } from "react";
+import { type ReactNode, useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { CategoryDTO } from "@/lib/types";
@@ -16,6 +16,7 @@ import {
   IconMenu,
   IconSearch,
   IconStore,
+  IconWhatsApp,
 } from "@/components/store/Icons";
 import { Store as LucideStore, ShoppingCart as LucideShoppingCart } from "lucide-react";
 import { useCart } from "./CartProvider";
@@ -33,6 +34,7 @@ export function StoreChrome({ children, categories, settings }: Props) {
   const { itemCount, openCart } = useCart();
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [announcementIdx, setAnnouncementIdx] = useState(0);
   const pathname = usePathname();
 
   const shippingNotice =
@@ -48,11 +50,30 @@ export function StoreChrome({ children, categories, settings }: Props) {
     (settings.instagram_url as string) ?? "https://instagram.com/milina.luxury";
   const facebookUrl =
     (settings.facebook_url as string) ?? "https://facebook.com/milina.luxury";
+  const whatsappUrl =
+    (settings.whatsapp_url as string) ?? "https://wa.me/213660989407";
+  const whatsappVisible =
+    settings.whatsapp_visible !== undefined ? settings.whatsapp_visible === true || settings.whatsapp_visible === "true" : true;
 
   // On admin pages, render minimal layout
   if (pathname?.startsWith("/admin")) {
     return <>{children}</>;
   }
+
+  const announcements = [
+    "Bienvenue à boutique Milina Luxury",
+    shippingNotice,
+    "Paiement à la livraison",
+    "Échanges possibles 24h",
+  ];
+
+  // Cycle announcements
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setAnnouncementIdx((prev) => (prev + 1) % announcements.length);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, [announcements.length]);
 
   const visibleCategories = categories.filter((c) => c.slug !== "tout");
   const navCategories = [
@@ -63,20 +84,25 @@ export function StoreChrome({ children, categories, settings }: Props) {
   return (
     <div className="flex min-h-screen flex-col bg-white pb-[60px] md:pb-0">
       {/* Announcement bar */}
-      <div className="bg-black text-white">
-        <div className="overflow-hidden">
-          <div className="marquee-track flex whitespace-nowrap py-2 text-xs uppercase tracking-[0.18em]">
-            {[...Array(6)].map((_, i) => (
-              <span key={i} className="mx-8 inline-flex items-center gap-8">
-                <span>{shippingNotice}</span>
-                <span className="opacity-50">•</span>
-                <span>Paiement à la livraison</span>
-                <span className="opacity-50">•</span>
-                <span>Échanges possibles 24h</span>
-                <span className="opacity-50">•</span>
-              </span>
-            ))}
-          </div>
+      <div className="bg-white border-b border-neutral-100">
+        <div className="relative flex items-center justify-center overflow-hidden py-2.5">
+          {announcements.map((msg, i) => (
+            <span
+              key={msg}
+              className={`absolute inset-x-0 text-center text-base font-bold italic text-black transition-all duration-500 ${
+                i === announcementIdx
+                  ? "translate-y-0 opacity-100"
+                  : "translate-y-4 opacity-0"
+              }`}
+              style={{ fontFamily: "'Amiri', serif" }}
+            >
+              {msg}
+            </span>
+          ))}
+          {/* invisible spacer */}
+          <span className="invisible text-base font-bold italic" style={{ fontFamily: "'Amiri', serif" }}>
+            {announcements[0]}
+          </span>
         </div>
       </div>
 
@@ -316,6 +342,20 @@ export function StoreChrome({ children, categories, settings }: Props) {
           </a>
         </div>
       </footer>
+
+      {/* WhatsApp floating button */}
+      {whatsappVisible && whatsappUrl && (
+        <a
+          href={whatsappUrl}
+          target="_blank"
+          rel="noreferrer"
+          aria-label="WhatsApp"
+          className="fixed z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl hover:shadow-green-200/40 active:scale-95 md:bottom-8 md:left-8 bottom-[76px] left-4"
+          style={{ animation: 'whatsapp-pulse 2s ease-in-out infinite' }}
+        >
+          <IconWhatsApp size={28} />
+        </a>
+      )}
 
       {/* Mobile Bottom Navigation */}
       <nav className="fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around border-t border-neutral-200 bg-white/95 px-2 py-2 backdrop-blur md:hidden">
