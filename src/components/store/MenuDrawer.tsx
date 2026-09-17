@@ -1,0 +1,99 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import type { CategoryDTO } from "@/lib/types";
+import { IconClose, IconHome, IconHeart, IconBag, IconDashboard } from "./Icons";
+
+interface Props {
+  open: boolean;
+  onClose: () => void;
+  categories: CategoryDTO[];
+}
+
+export function MenuDrawer({ open, onClose, categories }: Props) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
+  if (!mounted) return null;
+
+  return (
+    <>
+      {/* Backdrop */}
+      {open && (
+        <div
+          className="fixed inset-0 z-50 bg-black/40 transition-opacity"
+          onClick={onClose}
+        />
+      )}
+      {/* Drawer */}
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 w-[88%] max-w-sm transform border-r border-neutral-100 bg-white transition-transform duration-300 ${
+          open ? "translate-x-0" : "-translate-x-full"
+        }`}
+        aria-hidden={!open}
+      >
+        <div className="flex items-center justify-between border-b border-neutral-100 px-5 py-4">
+          <h2 className="text-lg font-semibold">Menu</h2>
+          <button
+            type="button"
+            aria-label="Fermer"
+            onClick={onClose}
+            className="rounded-full p-2 hover:bg-neutral-100"
+          >
+            <IconClose />
+          </button>
+        </div>
+        <nav className="no-scrollbar flex-1 overflow-y-auto px-2 py-2">
+          <Link
+            href="/"
+            onClick={onClose}
+            className="flex items-center gap-3 rounded-md px-4 py-3 text-base transition-smooth hover:bg-neutral-50"
+          >
+            <IconHome size={20} /> Accueil
+          </Link>
+          {categories
+            .filter((c) => c.slug !== "tout")
+            .map((c) => (
+              <Link
+                key={c.id}
+                href={`/categorie/${c.slug}`}
+                onClick={onClose}
+                className="block rounded-md px-4 py-3 text-base transition-smooth hover:bg-neutral-50"
+              >
+                {c.name}
+              </Link>
+            ))}
+          <Link
+            href="/favoris"
+            onClick={onClose}
+            className="mt-2 flex items-center gap-3 rounded-md px-4 py-3 text-base transition-smooth hover:bg-neutral-50"
+          >
+            <IconHeart size={20} /> Favoris
+          </Link>
+          <Link
+            href="/admin"
+            onClick={onClose}
+            className="mt-2 flex items-center gap-3 rounded-md px-4 py-3 text-base transition-smooth hover:bg-neutral-50"
+          >
+            <IconDashboard size={20} /> Tableau de bord
+          </Link>
+        </nav>
+        <div className="border-t border-neutral-100 px-4 py-3 text-xs text-neutral-500">
+          Milina Luxury
+        </div>
+      </aside>
+    </>
+  );
+}
