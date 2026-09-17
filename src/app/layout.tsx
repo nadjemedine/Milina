@@ -47,8 +47,8 @@ export default async function RootLayout({
   return (
     <html lang="fr">
       <head>
-        {settings.favicon_image && (
-          <link rel="icon" href={settings.favicon_image as string} />
+        {typeof settings.favicon_image === "string" && settings.favicon_image && (
+          <link rel="icon" href={settings.favicon_image} />
         )}
       </head>
       <body className="min-h-screen bg-white text-black antialiased">

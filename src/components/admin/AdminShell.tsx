@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useState, useEffect, type ReactNode } from "react";
+import { usePathname } from "next/navigation";
+import { useState, type ReactNode } from "react";
+import { logout } from "@/app/admin/login/actions";
 import {
   IconDashboard,
   IconBox,
@@ -32,77 +33,10 @@ const NAV = [
 
 export function AdminShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const router = useRouter();
-  const [authed, setAuthed] = useState(false);
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (sessionStorage.getItem("milina_admin") === "1") setAuthed(true);
-  }, []);
-
-  const login = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (password === "admin1234") {
-      sessionStorage.setItem("milina_admin", "1");
-      setAuthed(true);
-      setError(null);
-    } else {
-      setError("Mot de passe incorrect");
-    }
-  };
-
-  const logout = () => {
-    sessionStorage.removeItem("milina_admin");
-    setAuthed(false);
-    router.push("/admin");
-  };
-
-  if (!authed) {
-    return (
-      <div className="admin-root flex min-h-screen items-center justify-center bg-gradient-to-br from-neutral-50 to-neutral-200 p-4">
-        <form
-          onSubmit={login}
-          className="admin-card w-full max-w-md p-8 shadow-xl"
-        >
-          <div className="mb-6 flex flex-col items-center">
-            <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-black text-white">
-              <IconStore size={24} />
-            </div>
-            <h1 className="font-serif text-2xl font-bold">Milina Admin</h1>
-            <p className="mt-1 text-sm text-neutral-500">
-              Tableau de bord de la boutique
-            </p>
-          </div>
-          <label className="admin-label">Mot de passe</label>
-          <input
-            type="password"
-            autoFocus
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Entrez le mot de passe admin"
-            className="admin-input"
-          />
-          {error && (
-            <p className="mt-2 text-sm text-red-600">{error}</p>
-          )}
-          <button type="submit" className="admin-btn mt-5 w-full justify-center">
-            Se connecter
-          </button>
-          <p className="mt-4 text-center text-xs text-neutral-500">
-            Démo: <code className="rounded bg-neutral-100 px-1.5 py-0.5">admin1234</code>
-          </p>
-          <Link
-            href="/"
-            className="mt-4 block text-center text-xs text-neutral-500 hover:text-black"
-          >
-            ← Retour à la boutique
-          </Link>
-        </form>
-      </div>
-    );
+  if (pathname === "/admin/login") {
+    return <>{children}</>;
   }
 
   return (
@@ -162,13 +96,14 @@ export function AdminShell({ children }: { children: ReactNode }) {
           })}
         </nav>
         <div className="border-t border-neutral-100 p-3">
-          <button
-            type="button"
-            onClick={logout}
-            className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-neutral-700 transition-colors hover:bg-neutral-100"
-          >
-            <IconLogout size={18} /> Déconnexion
-          </button>
+          <form action={logout}>
+            <button
+              type="submit"
+              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-neutral-700 transition-colors hover:bg-neutral-100"
+            >
+              <IconLogout size={18} /> Déconnexion
+            </button>
+          </form>
           <Link
             href="/"
             className="mt-1 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-neutral-700 transition-colors hover:bg-neutral-100"

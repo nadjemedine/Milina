@@ -59,10 +59,29 @@ export function MenuDrawer({ open, onClose, categories }: Props) {
           <Link
             href="/"
             onClick={onClose}
-            className="flex items-center gap-3 rounded-md px-4 py-3 text-base transition-smooth hover:bg-neutral-50"
+            className="flex items-center gap-3 rounded-md px-4 py-3 text-base font-bold transition-smooth hover:bg-neutral-50"
           >
             <IconHome size={20} /> Accueil
           </Link>
+          
+          <Link
+            href="/favoris"
+            onClick={onClose}
+            className="flex items-center gap-3 rounded-md px-4 py-3 text-base font-bold transition-smooth hover:bg-neutral-50"
+          >
+            <IconHeart size={20} /> Favoris
+          </Link>
+
+          <Link
+            href="/cgu"
+            onClick={onClose}
+            className="flex items-center gap-3 rounded-md px-4 py-3 text-base font-bold transition-smooth hover:bg-neutral-50"
+          >
+            Conditions Générales De Vente
+          </Link>
+
+          <hr className="my-3 border-neutral-100" />
+
           {categories
             .filter((c) => c.slug !== "tout")
             .map((c) => (
@@ -70,27 +89,13 @@ export function MenuDrawer({ open, onClose, categories }: Props) {
                 key={c.id}
                 href={`/categorie/${c.slug}`}
                 onClick={onClose}
-                className="block rounded-md px-4 py-3 text-base transition-smooth hover:bg-neutral-50"
+                className="block rounded-md px-4 py-3 text-base font-bold transition-smooth hover:bg-neutral-50"
               >
                 {c.name}
               </Link>
             ))}
-          <Link
-            href="/favoris"
-            onClick={onClose}
-            className="mt-2 flex items-center gap-3 rounded-md px-4 py-3 text-base transition-smooth hover:bg-neutral-50"
-          >
-            <IconHeart size={20} /> Favoris
-          </Link>
-          <Link
-            href="/admin"
-            onClick={onClose}
-            className="mt-2 flex items-center gap-3 rounded-md px-4 py-3 text-base transition-smooth hover:bg-neutral-50"
-          >
-            <IconDashboard size={20} /> Tableau de bord
-          </Link>
         </nav>
-        <div className="border-t border-neutral-100 px-4 py-3 text-xs text-neutral-500">
+        <div className="border-t border-neutral-100 px-4 py-3 text-xs font-bold text-neutral-500">
           Milina Luxury
         </div>
       </aside>

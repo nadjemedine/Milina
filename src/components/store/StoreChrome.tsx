@@ -255,7 +255,7 @@ export function StoreChrome({ children, categories, settings }: Props) {
               <img src={settings.footer_logo_image as string} alt="Footer Logo" className="h-16 w-auto object-contain" />
             ) : null}
           </div>
-          <h3 className="text-xs font-medium uppercase tracking-[0.4em] text-black">
+          <h3 className="text-xs font-bold uppercase tracking-[0.4em] text-black">
             À propos
           </h3>
           <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-neutral-600">
@@ -268,7 +268,7 @@ export function StoreChrome({ children, categories, settings }: Props) {
             Conditions Générales De Vente
           </Link>
 
-          <h3 className="mt-12 text-xs font-medium uppercase tracking-[0.4em] text-black">
+          <h3 className="mt-12 text-xs font-bold uppercase tracking-[0.4em] text-black">
             Contact
           </h3>
           <div className="mt-6 flex flex-col items-center gap-3 text-sm text-neutral-700">
