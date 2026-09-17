@@ -303,9 +303,17 @@ export function StoreChrome({ children, categories, settings }: Props) {
             </div>
           </div>
 
-          <div className="mt-12 border-t border-neutral-100 pt-6 text-xs text-neutral-400">
+          <div className="mt-12 border-t border-neutral-100 pt-6 text-xs font-bold text-black">
             © {new Date().getFullYear()} Milina Luxury · Tous droits réservés
           </div>
+          <a
+            href="https://www.instagram.com/ne__dev"
+            target="_blank"
+            rel="noreferrer"
+            className="mt-3 inline-block text-xs font-bold bg-gradient-to-r from-purple-500 via-pink-500 to-orange-400 bg-clip-text text-transparent hover:opacity-80 transition-opacity"
+          >
+            Développé par Ne__dev
+          </a>
         </div>
       </footer>
 
