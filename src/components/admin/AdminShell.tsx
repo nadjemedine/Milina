@@ -11,6 +11,7 @@ import {
   IconUsers,
   IconMessage,
   IconSettings,
+  IconPalette,
   IconLogout,
   IconDb,
   IconTrend,
@@ -29,6 +30,7 @@ const NAV = [
   { href: "/admin/clients", label: "Clients", icon: IconUsers },
   { href: "/admin/messages", label: "Messages", icon: IconMessage },
   { href: "/admin/parametres", label: "Paramètres", icon: IconSettings },
+  { href: "/admin/apparence", label: "Couleurs", icon: IconPalette },
 ];
 
 export function AdminShell({ children }: { children: ReactNode }) {

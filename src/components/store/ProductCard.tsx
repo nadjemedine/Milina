@@ -24,7 +24,10 @@ export function ProductCard({ product, priority }: Props) {
 
   return (
     <article className="group fade-in">
-      <div className="zoom-container relative aspect-[3/4] overflow-hidden rounded-xl bg-neutral-100">
+      <div 
+        className="zoom-container relative aspect-[3/4] overflow-hidden rounded-xl border border-black/5"
+        style={{ backgroundColor: 'var(--product-card-bg, #f5f5f5)' }}
+      >
         <Link href={`/produit/${product.slug}`} aria-label={product.name}>
           <img
             src={product.images[0] ?? ""}
@@ -35,7 +38,7 @@ export function ProductCard({ product, priority }: Props) {
         </Link>
 
         {onSale && (
-          <span className="absolute left-3 top-3 rounded-full bg-black px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">
+          <span className="absolute left-3 top-3 rounded-full bg-black px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white shadow-sm">
             -{discount}%
           </span>
         )}
@@ -46,7 +49,8 @@ export function ProductCard({ product, priority }: Props) {
             type="button"
             aria-label={fav ? "Retirer des favoris" : "Ajouter aux favoris"}
             onClick={() => toggleFavorite(product.slug)}
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 bg-white text-black transition-smooth hover:scale-110 hover:bg-black hover:text-white"
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 bg-white transition-smooth hover:scale-110"
+            style={{ color: 'var(--product-card-btn-icon, #000000)' }}
           >
             <IconHeart size={16} filled={fav} />
           </button>
@@ -54,7 +58,8 @@ export function ProductCard({ product, priority }: Props) {
             type="button"
             aria-label="Ajouter au panier"
             onClick={() => setSheetOpen(true)}
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 bg-white text-black transition-smooth hover:scale-110 hover:bg-black hover:text-white"
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 bg-white transition-smooth hover:scale-110"
+            style={{ color: 'var(--product-card-btn-icon, #000000)' }}
           >
             <IconBag size={16} />
           </button>
@@ -64,7 +69,8 @@ export function ProductCard({ product, priority }: Props) {
         <button
           type="button"
           onClick={() => setSheetOpen(true)}
-          className="absolute bottom-3 left-3 right-3 rounded-full bg-white/95 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-black opacity-0 shadow-lg transition-smooth hover:bg-black hover:text-white group-hover:opacity-100 md:hidden"
+          className="absolute bottom-3 left-3 right-3 rounded-full px-4 py-2.5 text-xs font-semibold uppercase tracking-wider opacity-0 shadow-lg transition-smooth hover:opacity-90 group-hover:opacity-100 md:hidden"
+          style={{ backgroundColor: 'var(--product-card-btn-icon, #000000)', color: '#ffffff' }}
         >
           Ajouter au panier
         </button>
@@ -72,7 +78,7 @@ export function ProductCard({ product, priority }: Props) {
 
       <div className="mt-4 flex items-start justify-between gap-3">
         <Link href={`/produit/${product.slug}`} className="flex-1">
-          <h3 className="line-clamp-1 text-sm font-medium uppercase tracking-wider text-black transition-smooth hover:underline">
+          <h3 className="line-clamp-1 text-sm font-medium uppercase tracking-wider transition-smooth hover:opacity-80">
             {product.name}
           </h3>
           {product.colors.length > 0 && (
@@ -84,7 +90,7 @@ export function ProductCard({ product, priority }: Props) {
       </div>
 
       <div className="mt-2 flex items-baseline gap-2">
-        <span className="text-base font-bold text-black">
+        <span className="text-base font-bold">
           {product.price.toLocaleString("fr-DZ")} {product.currency}
         </span>
         {onSale && (

@@ -82,19 +82,19 @@ export function StoreChrome({ children, categories, settings }: Props) {
   ];
 
   return (
-    <div className="flex min-h-screen flex-col bg-white pb-[60px] md:pb-0">
+    <div className="flex min-h-screen flex-col pb-[60px] md:pb-0" style={{ backgroundColor: 'var(--store-bg, #ffffff)' }}>
       {/* Announcement bar */}
-      <div className="bg-white border-b border-neutral-100">
+      <div className="border-b border-neutral-100" style={{ backgroundColor: 'var(--topbar-bg, #ffffff)' }}>
         <div className="relative flex items-center justify-center overflow-hidden py-2.5">
           {announcements.map((msg, i) => (
             <span
               key={msg}
-              className={`absolute inset-x-0 text-center text-base font-bold italic text-black transition-all duration-500 ${
+              className={`absolute inset-x-0 text-center text-base font-bold italic transition-all duration-500 ${
                 i === announcementIdx
                   ? "translate-y-0 opacity-100"
                   : "translate-y-4 opacity-0"
               }`}
-              style={{ fontFamily: "'Amiri', serif" }}
+              style={{ fontFamily: "'Amiri', serif", color: 'var(--topbar-text, #000000)' }}
             >
               {msg}
             </span>
@@ -107,14 +107,15 @@ export function StoreChrome({ children, categories, settings }: Props) {
       </div>
 
       {/* Header */}
-      <header className="sticky top-0 z-40 border-b border-neutral-100 bg-white/95 backdrop-blur">
+      <header className="sticky top-0 z-40 border-b border-neutral-100 backdrop-blur" style={{ backgroundColor: 'var(--header-bg, rgba(255,255,255,0.95))' }}>
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 md:px-8">
           <div className="flex items-center gap-3">
             <button
               type="button"
               aria-label="Menu"
               onClick={() => setMenuOpen(true)}
-              className="rounded-full p-2 transition-smooth hover:bg-neutral-100"
+              className="rounded-full p-2 transition-smooth hover:bg-black/5"
+              style={{ color: 'var(--header-icon, #000000)' }}
             >
               <IconMenu size={22} />
             </button>
@@ -122,7 +123,8 @@ export function StoreChrome({ children, categories, settings }: Props) {
               type="button"
               aria-label="Rechercher"
               onClick={() => setSearchOpen(true)}
-              className="rounded-full p-2 transition-smooth hover:bg-neutral-100"
+              className="rounded-full p-2 transition-smooth hover:bg-black/5"
+              style={{ color: 'var(--header-icon, #000000)' }}
             >
               <IconSearch size={20} />
             </button>
@@ -133,7 +135,12 @@ export function StoreChrome({ children, categories, settings }: Props) {
             className="absolute left-1/2 -translate-x-1/2 transform flex items-center justify-center"
           >
             {(settings.logo_image as string) ? (
-              <img src={settings.logo_image as string} alt="Logo" className="h-8 md:h-10 w-auto object-contain" />
+              <img 
+                src={settings.logo_image as string} 
+                alt="Logo" 
+                className={settings.logo_size ? "w-auto object-contain" : "h-8 md:h-10 w-auto object-contain"} 
+                style={settings.logo_size ? { height: `${settings.logo_size}px` } : undefined}
+              />
             ) : null}
           </Link>
 
@@ -141,7 +148,8 @@ export function StoreChrome({ children, categories, settings }: Props) {
             <Link
               href="/favoris"
               aria-label="Favoris"
-              className="rounded-full p-2 transition-smooth hover:bg-neutral-100"
+              className="rounded-full p-2 transition-smooth hover:bg-black/5"
+              style={{ color: 'var(--header-icon, #000000)' }}
             >
               <IconHeart size={20} />
             </Link>
@@ -149,7 +157,8 @@ export function StoreChrome({ children, categories, settings }: Props) {
               type="button"
               aria-label="Panier"
               onClick={openCart}
-              className="relative rounded-full p-2 transition-smooth hover:bg-neutral-100"
+              className="relative rounded-full p-2 transition-smooth hover:bg-black/5"
+              style={{ color: 'var(--header-icon, #000000)' }}
             >
               <IconBag size={20} />
               {itemCount > 0 && (
@@ -162,7 +171,7 @@ export function StoreChrome({ children, categories, settings }: Props) {
         </div>
 
         {/* Category nav */}
-        <nav className="border-t border-neutral-100 bg-white">
+        <nav className="border-t border-black/5" style={{ backgroundColor: 'var(--menu-bg, #ffffff)' }}>
           <div className="mx-auto max-w-7xl px-4 md:px-8">
             <div className="no-scrollbar flex items-center gap-2 overflow-x-auto py-3">
               {navCategories.map((c) => {
@@ -174,11 +183,12 @@ export function StoreChrome({ children, categories, settings }: Props) {
                   <Link
                     key={c.slug}
                     href={c.slug === "tout" ? "/" : `/categorie/${c.slug}`}
-                    className={`whitespace-nowrap rounded-full border px-4 py-1.5 text-sm transition-smooth ${
-                      isActive
-                        ? "border-black bg-black text-white"
-                        : "border-neutral-200 text-neutral-700 hover:border-black hover:text-black"
-                    }`}
+                    className={`whitespace-nowrap rounded-full border px-4 py-1.5 text-sm transition-smooth`}
+                    style={{
+                      backgroundColor: isActive ? 'var(--menu-text, #000000)' : 'transparent',
+                      color: isActive ? 'var(--menu-bg, #ffffff)' : 'var(--menu-text, #000000)',
+                      borderColor: isActive ? 'var(--menu-text, #000000)' : 'rgba(0,0,0,0.1)'
+                    }}
                   >
                     {c.name}
                   </Link>
@@ -191,7 +201,7 @@ export function StoreChrome({ children, categories, settings }: Props) {
 
       {/* Search overlay */}
       {searchOpen && (
-        <div className="fixed inset-0 z-50 bg-white">
+        <div className="fixed inset-0 z-50" style={{ backgroundColor: 'var(--store-bg, #ffffff)' }}>
           <div className="mx-auto max-w-3xl px-4 py-6 md:px-8">
             <div className="flex items-center justify-between">
               <h2 className="font-serif text-2xl">Rechercher</h2>
@@ -199,7 +209,7 @@ export function StoreChrome({ children, categories, settings }: Props) {
                 type="button"
                 aria-label="Fermer"
                 onClick={() => setSearchOpen(false)}
-                className="rounded-full p-2 hover:bg-neutral-100"
+                className="rounded-full p-2 hover:bg-black/5"
               >
                 <IconClose />
               </button>
@@ -222,7 +232,7 @@ export function StoreChrome({ children, categories, settings }: Props) {
       <main className="flex-1">{children}</main>
 
       {/* Features section */}
-      <section className="border-t border-neutral-100 bg-white px-4 py-12 md:px-8">
+      <section className="border-t border-black/5 px-4 py-12 md:px-8">
         <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {[
             {
@@ -263,7 +273,8 @@ export function StoreChrome({ children, categories, settings }: Props) {
           ].map((f) => (
             <div
               key={f.title}
-              className="flex flex-col items-center rounded-2xl border border-neutral-100 bg-white p-6 text-center transition-smooth hover:border-neutral-300 hover:shadow-sm"
+              className="flex flex-col items-center rounded-2xl border border-black/5 p-6 text-center transition-smooth hover:shadow-sm"
+              style={{ backgroundColor: 'var(--features-bg, #ffffff)' }}
             >
               <div className="mb-4 text-black">{f.icon}</div>
               <h3 className="text-base font-semibold text-black">{f.title}</h3>
@@ -274,11 +285,16 @@ export function StoreChrome({ children, categories, settings }: Props) {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-neutral-100 bg-white">
+      <footer className="border-t border-black/5" style={{ backgroundColor: 'var(--footer-bg, #ffffff)' }}>
         <div className="mx-auto max-w-4xl px-4 py-16 text-center md:px-8">
           <div className="mb-8 flex justify-center">
             {(settings.footer_logo_image as string) ? (
-              <img src={settings.footer_logo_image as string} alt="Footer Logo" className="h-16 w-auto object-contain" />
+              <img 
+                src={settings.footer_logo_image as string} 
+                alt="Footer Logo" 
+                className={settings.footer_logo_size ? "w-auto object-contain" : "h-16 w-auto object-contain"} 
+                style={settings.footer_logo_size ? { height: `${settings.footer_logo_size}px` } : undefined}
+              />
             ) : null}
           </div>
           <h3 className="text-xs font-bold uppercase tracking-[0.4em] text-black">
@@ -329,7 +345,7 @@ export function StoreChrome({ children, categories, settings }: Props) {
             </div>
           </div>
 
-          <div className="mt-12 border-t border-neutral-100 pt-6 text-xs font-bold text-black">
+          <div className="mt-12 border-t border-black/5 pt-6 text-xs font-bold text-black">
             © {new Date().getFullYear()} Milina Luxury · Tous droits réservés
           </div>
           <a
@@ -358,12 +374,18 @@ export function StoreChrome({ children, categories, settings }: Props) {
       )}
 
       {/* Mobile Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around border-t border-neutral-200 bg-white/95 px-2 py-2 backdrop-blur md:hidden">
-        <Link href="/" className="group flex flex-col items-center gap-1 text-black transition-all active:scale-95">
+      <nav 
+        className="fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around border-t border-neutral-200 px-2 py-2 backdrop-blur md:hidden"
+        style={{ 
+          backgroundColor: 'var(--bottombar-bg, rgba(255,255,255,0.95))',
+          color: 'var(--bottombar-icon-text, #000000)'
+        }}
+      >
+        <Link href="/" className="group flex flex-col items-center gap-1 transition-all active:scale-95">
           <LucideStore size={22} strokeWidth={1.5} className="transition-transform group-hover:-translate-y-0.5" />
           <span className="text-[10px] font-bold uppercase tracking-wider">Boutique</span>
         </Link>
-        <Link href="/commander" className="group flex flex-col items-center gap-1 text-black transition-all active:scale-95">
+        <Link href="/commander" className="group flex flex-col items-center gap-1 transition-all active:scale-95">
           <div className="relative transition-transform group-hover:-translate-y-0.5">
             <LucideShoppingCart size={22} strokeWidth={1.5} />
             {itemCount > 0 && (

@@ -5,41 +5,75 @@ import { IconStore } from "@/components/store/Icons";
 import { useActionState, useEffect, useState } from "react";
 import { login } from "./actions";
 
+function Typewriter({ text, speed = 50, delay = 0 }: { text: string; speed?: number; delay?: number }) {
+  const [displayed, setDisplayed] = useState("");
+  useEffect(() => {
+    const start = setTimeout(() => {
+      let i = 0;
+      const intervalId = setInterval(() => {
+        setDisplayed(text.substring(0, i + 1));
+        i++;
+        if (i >= text.length) clearInterval(intervalId);
+      }, speed);
+      return () => clearInterval(intervalId);
+    }, delay);
+    return () => clearTimeout(start);
+  }, [text, speed, delay]);
+  
+  return <>{displayed}</>;
+}
+
 export default function LoginPage() {
   const [state, formAction, isPending] = useActionState(login, null);
   const [mounted, setMounted] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [logo, setLogo] = useState<string | null>(null);
 
   useEffect(() => {
     setMounted(true);
+    fetch("/api/admin/settings")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.settings?.logo_image) {
+          setLogo(d.settings.logo_image);
+        }
+      })
+      .catch(() => {});
   }, []);
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-black text-white selection:bg-white/30">
+    <div className="relative flex min-h-screen flex-col overflow-hidden bg-white text-black selection:bg-black/10">
+      {/* Interactive Header */}
+      <header className="relative z-50 w-full cursor-default bg-black px-6 py-5 shadow-lg transition-colors duration-300 hover:bg-neutral-900">
+        <h1 className="text-center text-base font-bold font-serif italic tracking-widest text-white md:text-xl min-h-[1.75rem]">
+          <Typewriter text="Controle Pannel De Boutique Milina Luxury" delay={300} />
+        </h1>
+      </header>
       {/* Animated Background Elements */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute top-1/4 left-1/4 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/5 blur-[120px]" />
-        <div className="absolute bottom-1/4 right-1/4 h-[400px] w-[400px] translate-x-1/2 translate-y-1/2 rounded-full bg-white/5 blur-[100px]" />
+        <div className="absolute top-1/4 left-1/4 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-black/5 blur-[120px]" />
+        <div className="absolute bottom-1/4 right-1/4 h-[400px] w-[400px] translate-x-1/2 translate-y-1/2 rounded-full bg-black/5 blur-[100px]" />
       </div>
 
-      <div
-        className={`relative z-10 w-full max-w-md p-8 transition-all duration-1000 ease-out ${
-          mounted ? "translate-y-0 opacity-100" : "translate-y-12 opacity-0"
-        }`}
-      >
-        <div className="mb-12 flex flex-col items-center">
-          {/* Logo Placeholder - Will display /logo.png once added to the store */}
-          <img 
-            src="/logo.png" 
-            alt="Logo" 
-            className="h-16 w-auto object-contain transition-transform duration-500 hover:scale-105" 
-            onError={(e) => {
-              e.currentTarget.style.display = 'none';
-            }}
-          />
-          <p className="mt-4 text-sm tracking-widest text-white/50 uppercase">
-            Accès Sécurisé
-          </p>
+      <div className="relative z-10 flex w-full flex-1 items-center justify-center px-4 py-8">
+        <div
+          className={`w-full max-w-md p-8 transition-all duration-1000 ease-out ${
+            mounted ? "translate-y-0 opacity-100" : "translate-y-12 opacity-0"
+          }`}
+        >
+        <div className="mb-16 flex flex-col items-center">
+          {/* Dynamic Logo */}
+          {logo && (
+            <img 
+              src={logo}
+              alt="Logo" 
+              className="h-24 w-auto object-contain transition-transform duration-500 hover:scale-105" 
+            />
+          )}
+          <div className="mt-8 flex w-full flex-col items-center gap-2 rounded-2xl bg-black/5 px-6 py-4 text-center text-base font-bold font-serif italic tracking-widest text-black backdrop-blur-sm min-h-[5rem] justify-center">
+            <p><Typewriter text="Accès Sécurisé" delay={800} /></p>
+            <p><Typewriter text="Pour Milina Soulement" delay={1300} /></p>
+          </div>
         </div>
 
         <form action={formAction} className="space-y-6">
@@ -48,7 +82,7 @@ export default function LoginPage() {
               mounted ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
             }`}
           >
-            <div className="group relative pt-6">
+            <div className="group relative pt-10">
               <input
                 id="email"
                 name="email"
@@ -56,12 +90,12 @@ export default function LoginPage() {
                 autoFocus
                 required
                 placeholder=" "
-                className="peer w-full border-b border-white/20 bg-transparent px-0 py-2 text-sm text-white placeholder-transparent transition-colors focus:border-white focus:outline-none focus:ring-0"
-                style={{ WebkitBoxShadow: "0 0 0px 1000px #000 inset", WebkitTextFillColor: "#fff" }}
+                className="peer w-full border-b border-black/20 bg-transparent px-0 py-2 text-base font-bold font-serif italic text-black placeholder-transparent transition-colors focus:border-black focus:outline-none focus:ring-0 text-center"
+                style={{ WebkitBoxShadow: "0 0 0px 1000px #ffffff inset", WebkitTextFillColor: "#000" }}
               />
               <label
                 htmlFor="email"
-                className="absolute left-0 top-1 text-xs text-white/50 transition-all peer-placeholder-shown:top-8 peer-placeholder-shown:text-sm peer-focus:top-1 peer-focus:text-xs peer-focus:text-white"
+                className="absolute left-0 -top-1 text-sm font-bold font-serif italic text-black/50 transition-all peer-placeholder-shown:top-12 peer-placeholder-shown:text-base peer-focus:-top-1 peer-focus:text-sm peer-focus:text-black peer-focus:left-1/2 peer-focus:-translate-x-1/2"
               >
                 Adresse e-mail
               </label>
@@ -73,26 +107,26 @@ export default function LoginPage() {
               mounted ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
             }`}
           >
-            <div className="group relative flex items-center pt-6">
+            <div className="group relative flex items-center pt-10">
               <input
                 id="password"
                 name="password"
                 type={showPassword ? "text" : "password"}
                 required
                 placeholder=" "
-                className="peer w-full border-b border-white/20 bg-transparent px-0 py-2 pr-10 text-sm text-white placeholder-transparent transition-colors focus:border-white focus:outline-none focus:ring-0"
-                style={{ WebkitBoxShadow: "0 0 0px 1000px #000 inset", WebkitTextFillColor: "#fff" }}
+                className="peer w-full border-b border-black/20 bg-transparent px-0 py-2 pr-10 text-base font-bold font-serif italic text-black placeholder-transparent transition-colors focus:border-black focus:outline-none focus:ring-0 text-center"
+                style={{ WebkitBoxShadow: "0 0 0px 1000px #ffffff inset", WebkitTextFillColor: "#000" }}
               />
               <label
                 htmlFor="password"
-                className="absolute left-0 top-1 text-xs text-white/50 transition-all peer-placeholder-shown:top-8 peer-placeholder-shown:text-sm peer-focus:top-1 peer-focus:text-xs peer-focus:text-white"
+                className="absolute left-0 -top-1 text-sm font-bold font-serif italic text-black/50 transition-all peer-placeholder-shown:top-12 peer-placeholder-shown:text-base peer-focus:-top-1 peer-focus:text-sm peer-focus:text-black peer-focus:left-1/2 peer-focus:-translate-x-1/2"
               >
                 Mot de passe
               </label>
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-0 top-6 p-2 text-white/50 hover:text-white focus:outline-none"
+                className="absolute right-0 top-10 p-2 text-black/50 hover:text-black focus:outline-none"
                 tabIndex={-1}
               >
                 {showPassword ? (
@@ -123,7 +157,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isPending}
-              className="group relative w-full overflow-hidden rounded-full bg-white px-8 py-3.5 text-sm font-medium tracking-wide text-black transition-all hover:bg-neutral-200 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-black disabled:cursor-not-allowed disabled:opacity-70"
+              className="group relative w-full overflow-hidden rounded-full bg-black px-8 py-3.5 text-lg font-bold font-serif italic tracking-wide text-white transition-all hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-black/50 focus:ring-offset-2 focus:ring-offset-white disabled:cursor-not-allowed disabled:opacity-70"
             >
               <span
                 className={`transition-opacity duration-300 ${
@@ -134,7 +168,7 @@ export default function LoginPage() {
               </span>
               {isPending && (
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="h-5 w-5 animate-spin rounded-full border-2 border-black border-t-transparent" />
+                  <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
                 </div>
               )}
             </button>
@@ -148,7 +182,7 @@ export default function LoginPage() {
         >
           <Link
             href="/"
-            className="group flex items-center justify-center gap-2 text-xs text-white/40 transition-colors hover:text-white"
+            className="group flex items-center justify-center gap-2 text-sm font-bold font-serif italic text-black/40 transition-colors hover:text-black"
           >
             <span className="transition-transform group-hover:-translate-x-1">
               ←
@@ -157,6 +191,7 @@ export default function LoginPage() {
           </Link>
         </div>
       </div>
+    </div>
     </div>
   );
 }

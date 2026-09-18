@@ -102,16 +102,44 @@ export default function AdminSettingsPage() {
                 value={settings["hero_image"] ?? ""}
                 onChange={(v) => setSettings({ ...settings, hero_image: v })}
               />
-              <ImageField
-                label="Logo principal"
-                value={settings["logo_image"] ?? ""}
-                onChange={(v) => setSettings({ ...settings, logo_image: v })}
-              />
-              <ImageField
-                label="Logo du footer"
-                value={settings["footer_logo_image"] ?? ""}
-                onChange={(v) => setSettings({ ...settings, footer_logo_image: v })}
-              />
+              <div>
+                <ImageField
+                  label="Logo principal"
+                  value={settings["logo_image"] ?? ""}
+                  onChange={(v) => setSettings({ ...settings, logo_image: v })}
+                />
+                <label className="mt-4 block">
+                  <span className="admin-label">Taille (Hauteur en px)</span>
+                  <input
+                    type="range"
+                    min="20"
+                    max="200"
+                    value={settings["logo_size"] ?? "40"}
+                    onChange={(e) => setSettings({ ...settings, logo_size: e.target.value })}
+                    className="w-full accent-black"
+                  />
+                  <div className="text-right text-xs text-neutral-500">{settings["logo_size"] ?? "40"}px</div>
+                </label>
+              </div>
+              <div>
+                <ImageField
+                  label="Logo du footer"
+                  value={settings["footer_logo_image"] ?? ""}
+                  onChange={(v) => setSettings({ ...settings, footer_logo_image: v })}
+                />
+                <label className="mt-4 block">
+                  <span className="admin-label">Taille (Hauteur en px)</span>
+                  <input
+                    type="range"
+                    min="20"
+                    max="300"
+                    value={settings["footer_logo_size"] ?? "64"}
+                    onChange={(e) => setSettings({ ...settings, footer_logo_size: e.target.value })}
+                    className="w-full accent-black"
+                  />
+                  <div className="text-right text-xs text-neutral-500">{settings["footer_logo_size"] ?? "64"}px</div>
+                </label>
+              </div>
               <ImageField
                 label="Favicon (Icône de l'onglet)"
                 value={settings["favicon_image"] ?? ""}

@@ -45,7 +45,29 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang="fr">
+    <html
+      lang="fr"
+      style={{
+        "--topbar-bg": settings.color_topbar_bg || undefined,
+        "--topbar-text": settings.color_topbar_text || undefined,
+        "--header-bg": settings.color_header_bg || undefined,
+        "--header-icon": settings.color_header_icon || undefined,
+        "--menu-bg": settings.color_menu_bg || undefined,
+        "--menu-text": settings.color_menu_text || undefined,
+        "--bottombar-bg": settings.color_bottombar_bg || undefined,
+        "--bottombar-icon-text": settings.color_bottombar_icon_text || undefined,
+        "--store-bg": settings.color_store_bg || undefined,
+        "--product-card-bg": settings.color_product_card_bg || undefined,
+        "--product-card-btn-icon": settings.color_product_card_btn_icon || undefined,
+        "--features-bg": settings.color_features_bg || undefined,
+        "--footer-bg": settings.color_footer_bg || undefined,
+        "--product-back-btn": settings.color_product_back_btn || undefined,
+        "--product-fav-icon": settings.color_product_fav_icon || undefined,
+        "--product-variant-btn": settings.color_product_variant_btn || undefined,
+        "--add-to-cart-btn": settings.color_add_to_cart_btn || undefined,
+        "--order-btn": settings.color_order_btn || undefined,
+      } as React.CSSProperties}
+    >
       <head>
         <link
           href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap"
@@ -55,7 +77,7 @@ export default async function RootLayout({
           <link rel="icon" href={settings.favicon_image} />
         )}
       </head>
-      <body className="min-h-screen bg-white text-black antialiased">
+      <body className="min-h-screen bg-[var(--store-bg,#ffffff)] text-black antialiased">
         <CartProvider>
           <StoreChrome categories={categories} settings={settings}>
             {children}

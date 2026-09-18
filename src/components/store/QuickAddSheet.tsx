@@ -142,11 +142,12 @@ export function QuickAddSheet({ product, open, onClose }: Props) {
                   key={size}
                   type="button"
                   onClick={() => setSelectedSize(size)}
-                  className={`rounded-lg border px-4 py-2 text-sm font-medium transition-all ${
-                    selectedSize === size
-                      ? "border-black bg-neutral-100 text-black"
-                      : "border-neutral-200 text-neutral-700 hover:border-neutral-400"
-                  }`}
+                  className="rounded-lg border px-4 py-2 text-sm font-medium transition-all hover:opacity-80"
+                  style={{
+                    backgroundColor: selectedSize === size ? 'var(--product-variant-btn, #1a1a1a)' : 'transparent',
+                    borderColor: selectedSize === size ? 'var(--product-variant-btn, #1a1a1a)' : 'rgba(0,0,0,0.1)',
+                    color: selectedSize === size ? '#ffffff' : 'inherit'
+                  }}
                 >
                   {size}
                 </button>
@@ -180,7 +181,8 @@ export function QuickAddSheet({ product, open, onClose }: Props) {
           <button
             type="button"
             onClick={handleAdd}
-            className="flex flex-1 items-center justify-center gap-2 rounded-full bg-black py-3.5 text-sm font-bold uppercase tracking-wider text-white shadow-lg shadow-neutral-300 transition-all hover:bg-neutral-800 active:scale-[0.98]"
+            className="flex flex-1 items-center justify-center gap-2 rounded-full py-3.5 text-sm font-bold uppercase tracking-wider text-white shadow-lg shadow-neutral-300 transition-all hover:opacity-90 active:scale-[0.98]"
+            style={{ backgroundColor: 'var(--add-to-cart-btn, #000000)' }}
           >
             <ShoppingCart size={18} strokeWidth={2} />
             Ajouter

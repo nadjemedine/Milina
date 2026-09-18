@@ -39,12 +39,13 @@ export function MenuDrawer({ open, onClose, categories }: Props) {
       )}
       {/* Drawer */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-[88%] max-w-sm transform border-r border-neutral-100 bg-white transition-transform duration-300 ${
+        className={`fixed inset-y-0 left-0 z-50 w-[88%] max-w-sm transform border-r border-black/5 transition-transform duration-300 ${
           open ? "translate-x-0" : "-translate-x-full"
         }`}
+        style={{ backgroundColor: 'var(--menu-bg, #ffffff)', color: 'var(--menu-text, #000000)' }}
         aria-hidden={!open}
       >
-        <div className="flex items-center justify-between border-b border-neutral-100 px-5 py-4">
+        <div className="flex items-center justify-between border-b border-black/5 px-5 py-4">
           <h2 className="text-lg font-semibold">Menu</h2>
           <button
             type="button"

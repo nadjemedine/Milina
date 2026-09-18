@@ -47,7 +47,8 @@ export function ProductDetail({ product, categoryName }: Props) {
         <Link
           href="/"
           aria-label="Retour"
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 transition-smooth hover:border-black"
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 transition-smooth hover:opacity-80"
+          style={{ backgroundColor: 'var(--product-back-btn, #ffffff)' }}
         >
           <IconChevronLeft size={18} />
         </Link>
@@ -58,7 +59,8 @@ export function ProductDetail({ product, categoryName }: Props) {
           type="button"
           onClick={() => toggleFavorite(product.slug)}
           aria-label={fav ? "Retirer des favoris" : "Ajouter aux favoris"}
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 transition-smooth hover:border-black"
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 transition-smooth hover:opacity-80"
+          style={{ color: 'var(--product-fav-icon, #000000)' }}
         >
           <IconHeart size={18} filled={fav} />
         </button>
@@ -85,14 +87,14 @@ export function ProductDetail({ product, categoryName }: Props) {
       <div className="grid gap-8 md:grid-cols-2">
         {/* Image gallery */}
         <div className="relative">
-          <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-neutral-100">
+          <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-neutral-100 border border-black/5">
             <img
               src={product.images[active] ?? ""}
               alt={product.name}
               className="h-full w-full object-cover"
             />
             {onSale && (
-              <span className="absolute left-4 top-4 rounded-full bg-black px-3 py-1 text-xs font-semibold uppercase tracking-wider text-white">
+              <span className="absolute left-4 top-4 rounded-full bg-black px-3 py-1 text-xs font-semibold uppercase tracking-wider text-white shadow-sm">
                 -{discount}% Réduction
               </span>
             )}
@@ -150,7 +152,7 @@ export function ProductDetail({ product, categoryName }: Props) {
           </h1>
 
           <div className="mt-4 flex items-baseline gap-3">
-            <span className="text-2xl font-bold text-black">
+            <span className="text-2xl font-bold">
               {product.price.toLocaleString("fr-DZ")} {product.currency}
             </span>
             {onSale && (
@@ -159,7 +161,7 @@ export function ProductDetail({ product, categoryName }: Props) {
                   {product.comparePrice!.toLocaleString("fr-DZ")}{" "}
                   {product.currency}
                 </span>
-                <span className="rounded-full bg-black px-2.5 py-0.5 text-xs font-semibold text-white">
+                <span className="rounded-full bg-black px-2.5 py-0.5 text-xs font-semibold text-white shadow-sm">
                   -{discount}% Réduction
                 </span>
               </>
@@ -181,11 +183,12 @@ export function ProductDetail({ product, categoryName }: Props) {
                     key={s}
                     type="button"
                     onClick={() => setSize(s)}
-                    className={`rounded-md border px-4 py-2 text-sm transition-smooth ${
-                      size === s
-                        ? "border-black bg-black text-white"
-                        : "border-neutral-200 hover:border-black"
-                    }`}
+                    className="rounded-md border px-4 py-2 text-sm transition-smooth hover:opacity-80"
+                    style={{
+                      backgroundColor: size === s ? 'var(--product-variant-btn, #000000)' : 'transparent',
+                      borderColor: size === s ? 'var(--product-variant-btn, #000000)' : 'rgba(0,0,0,0.1)',
+                      color: size === s ? '#ffffff' : 'inherit'
+                    }}
                   >
                     {s}
                   </button>
@@ -197,7 +200,7 @@ export function ProductDetail({ product, categoryName }: Props) {
           {product.colors.length > 0 && (
             <div className="mt-6">
               <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-neutral-600">
-                Couleur : <span className="text-black">{color}</span>
+                Couleur : <span>{color}</span>
               </p>
               <div className="flex flex-wrap gap-2">
                 {product.colors.map((c) => (
@@ -205,11 +208,12 @@ export function ProductDetail({ product, categoryName }: Props) {
                     key={c}
                     type="button"
                     onClick={() => setColor(c)}
-                    className={`rounded-md border px-4 py-2 text-sm transition-smooth ${
-                      color === c
-                        ? "border-black bg-black text-white"
-                        : "border-neutral-200 hover:border-black"
-                    }`}
+                    className="rounded-md border px-4 py-2 text-sm transition-smooth hover:opacity-80"
+                    style={{
+                      backgroundColor: color === c ? 'var(--product-variant-btn, #000000)' : 'transparent',
+                      borderColor: color === c ? 'var(--product-variant-btn, #000000)' : 'rgba(0,0,0,0.1)',
+                      color: color === c ? '#ffffff' : 'inherit'
+                    }}
                   >
                     {c}
                   </button>
@@ -222,7 +226,8 @@ export function ProductDetail({ product, categoryName }: Props) {
             <button
               type="button"
               onClick={() => addItem(product, { size, color })}
-              className="flex flex-1 items-center justify-center gap-2 rounded-full bg-black px-6 py-3.5 text-sm font-semibold uppercase tracking-wider text-white transition-smooth hover:bg-neutral-800"
+              className="flex flex-1 items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold uppercase tracking-wider transition-smooth hover:opacity-90 shadow-sm"
+              style={{ backgroundColor: 'var(--add-to-cart-btn, #000000)', color: '#ffffff' }}
             >
               <IconBag size={18} /> Ajouter au panier
             </button>
@@ -232,7 +237,8 @@ export function ProductDetail({ product, categoryName }: Props) {
                 addItem(product, { size, color, silent: true });
                 window.location.href = "/commander";
               }}
-              className="flex items-center justify-center gap-2 rounded-full border border-neutral-200 px-6 py-3.5 text-sm font-semibold uppercase tracking-wider transition-smooth hover:border-black"
+              className="flex items-center justify-center gap-2 rounded-full border px-6 py-3.5 text-sm font-semibold uppercase tracking-wider transition-smooth hover:opacity-80"
+              style={{ backgroundColor: 'var(--order-btn, #ffffff)', borderColor: 'rgba(0,0,0,0.1)' }}
             >
               <IconCheck size={18} />
               Commander
@@ -240,7 +246,7 @@ export function ProductDetail({ product, categoryName }: Props) {
           </div>
 
           {/* Trust badges */}
-          <ul className="mt-8 space-y-3 border-t border-neutral-100 pt-6 text-sm text-neutral-700">
+          <ul className="mt-8 space-y-3 border-t border-black/5 pt-6 text-sm text-neutral-700">
             <li className="flex items-center gap-3">
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-neutral-100 text-black">
                 <IconCheck size={16} />
