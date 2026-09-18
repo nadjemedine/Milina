@@ -71,7 +71,7 @@ export function QuickAddSheet({ product, open, onClose }: Props) {
         <div className="flex items-start gap-4">
           <div className="h-20 w-20 flex-none overflow-hidden rounded-xl bg-neutral-100">
             <img
-              src={product.images[0] ?? ""}
+              src={product.images[0]?.url ?? ""}
               alt={product.name}
               className="h-full w-full object-cover"
             />

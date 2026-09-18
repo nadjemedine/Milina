@@ -50,10 +50,15 @@ export const products = pgTable("products", {
   price: numeric("price", { precision: 12, scale: 2 }).notNull(),
   comparePrice: numeric("compare_price", { precision: 12, scale: 2 }),
   currency: varchar("currency", { length: 8 }).notNull().default("DA"),
-  stock: integer("stock").notNull().default(0),
-  images: jsonb("images").$type<string[]>().notNull().default([]),
+  images: jsonb("images")
+    .$type<{ url: string; color: string }[]>()
+    .notNull()
+    .default([]),
   sizes: jsonb("sizes").$type<string[]>().notNull().default([]),
-  colors: jsonb("colors").$type<string[]>().notNull().default([]),
+  variants: jsonb("variants")
+    .$type<{ color: string; size: string; quantity: number }[]>()
+    .notNull()
+    .default([]),
   tags: jsonb("tags").$type<string[]>().notNull().default([]),
   isFeatured: boolean("is_featured").notNull().default(false),
   isActive: boolean("is_active").notNull().default(true),

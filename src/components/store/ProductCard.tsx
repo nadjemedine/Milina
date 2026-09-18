@@ -30,7 +30,7 @@ export function ProductCard({ product, priority }: Props) {
       >
         <Link href={`/produit/${product.slug}`} aria-label={product.name}>
           <img
-            src={product.images[0] ?? ""}
+            src={product.images[0]?.url ?? ""}
             alt={product.name}
             loading={priority ? "eager" : "lazy"}
             className="zoom-img h-full w-full object-cover"

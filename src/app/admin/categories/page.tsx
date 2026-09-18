@@ -24,7 +24,7 @@ export default function AdminCategoriesPage() {
         setLoading(false);
       });
   };
-  useEffect(() => load, []);
+  useEffect(() => { load(); }, []);
 
   const save = async (e: React.FormEvent) => {
     e.preventDefault();

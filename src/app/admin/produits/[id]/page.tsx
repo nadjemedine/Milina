@@ -9,7 +9,7 @@ import {
   IconTrash,
   IconCheck,
 } from "@/components/store/Icons";
-import type { CategoryDTO, ProductDTO } from "@/lib/types";
+import type { CategoryDTO, ProductDTO, ProductImage, ProductVariant } from "@/lib/types";
 
 interface Form {
   slug: string;
@@ -19,10 +19,9 @@ interface Form {
   price: string;
   comparePrice: string;
   currency: string;
-  stock: string;
-  images: string[];
+  images: ProductImage[];
   sizes: string[];
-  colors: string[];
+  variants: ProductVariant[];
   tags: string[];
   isFeatured: boolean;
   isActive: boolean;
@@ -34,8 +33,11 @@ export default function EditProductPage() {
   const [form, setForm] = useState<Form | null>(null);
   const [categories, setCategories] = useState<CategoryDTO[]>([]);
   const [sizeInput, setSizeInput] = useState("");
-  const [colorInput, setColorInput] = useState("");
   const [tagInput, setTagInput] = useState("");
+  const [imageColorInput, setImageColorInput] = useState("");
+  const [variantColor, setVariantColor] = useState("");
+  const [variantSize, setVariantSize] = useState("");
+  const [variantQty, setVariantQty] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -55,10 +57,9 @@ export default function EditProductPage() {
             price: String(p.price),
             comparePrice: p.comparePrice ? String(p.comparePrice) : "",
             currency: p.currency,
-            stock: String(p.stock),
             images: p.images,
             sizes: p.sizes,
-            colors: p.colors,
+            variants: p.variants ?? [],
             tags: p.tags,
             isFeatured: p.isFeatured,
             isActive: p.isActive,
@@ -70,6 +71,23 @@ export default function EditProductPage() {
       .then((d) => setCategories(d.categories ?? []));
   }, [params.id]);
 
+  // Extract unique colors from images
+  const imageColors = form
+    ? [...new Set(form.images.map((img) => img.color).filter(Boolean))]
+    : [];
+
+  const addVariant = () => {
+    if (!form) return;
+    const c = variantColor.trim();
+    const s = variantSize.trim();
+    const q = parseInt(variantQty) || 0;
+    if (!c || !s) return;
+    const exists = form.variants.some((v) => v.color === c && v.size === s);
+    if (exists) return;
+    setForm((f) => f && { ...f, variants: [...f.variants, { color: c, size: s, quantity: q }] });
+    setVariantQty("");
+  };
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form) return;
@@ -80,7 +98,6 @@ export default function EditProductPage() {
         ...form,
         price: parseFloat(form.price) || 0,
         comparePrice: form.comparePrice ? parseFloat(form.comparePrice) : null,
-        stock: parseInt(form.stock) || 0,
       };
       const res = await fetch(`/api/admin/products/${params.id}`, {
         method: "PUT",
@@ -173,57 +190,96 @@ export default function EditProductPage() {
             </div>
           </div>
 
+          {/* Images with color linking */}
           <div className="admin-card p-5">
-            <h2 className="mb-4 font-semibold">Images</h2>
-            <div>
+            <h2 className="mb-4 font-semibold">Images & Couleurs</h2>
+            <p className="mb-3 text-xs text-neutral-500">
+              Chaque image est associée à une couleur. Entrez le nom de la couleur puis choisissez les images.
+            </p>
+            <div className="flex gap-2 mb-4">
               <input
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={(e) => {
-                  const files = e.target.files;
-                  if (!files) return;
-                  Array.from(files).forEach((file) => {
-                    const reader = new FileReader();
-                    reader.onloadend = () => {
-                      setForm((f) => f && {
-                        ...f,
-                        images: [...f.images, reader.result as string],
-                      });
-                    };
-                    reader.readAsDataURL(file);
-                  });
-                  e.target.value = "";
-                }}
-                className="admin-input flex-1 file:mr-4 file:rounded-full file:border-0 file:bg-neutral-100 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-black hover:file:bg-neutral-200"
+                placeholder="Nom de la couleur (ex: Noir, Beige...)"
+                value={imageColorInput}
+                onChange={(e) => setImageColorInput(e.target.value)}
+                className="admin-input flex-1"
               />
-            </div>
-            <div className="mt-3 grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5">
-              {form.images.map((src, i) => (
-                <div
-                  key={i}
-                  className="group relative aspect-square overflow-hidden rounded-lg border border-neutral-200"
-                >
-                  <img src={src} alt="" className="h-full w-full object-cover" />
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setForm((f) =>
-                        f ? { ...f, images: f.images.filter((_, idx) => idx !== i) } : f
-                      )
+              <label className="admin-btn-outline cursor-pointer whitespace-nowrap">
+                <IconPlus size={14} />
+                <span className="ml-1">Ajouter images</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                  onChange={(e) => {
+                    const files = e.target.files;
+                    const color = imageColorInput.trim();
+                    if (!files || !color) {
+                      alert("Veuillez entrer le nom de la couleur d'abord");
+                      return;
                     }
-                    className="absolute right-1 top-1 rounded-full bg-white/90 p-1 opacity-0 group-hover:opacity-100"
-                  >
-                    <IconTrash size={14} />
-                  </button>
-                </div>
-              ))}
+                    Array.from(files).forEach((file) => {
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        setForm((f) => f && ({
+                          ...f,
+                          images: [...f.images, { url: reader.result as string, color }],
+                        }));
+                      };
+                      reader.readAsDataURL(file);
+                    });
+                    e.target.value = "";
+                  }}
+                />
+              </label>
             </div>
+
+            {/* Group images by color */}
+            {imageColors.length > 0 && (
+              <div className="space-y-4">
+                {imageColors.map((color) => {
+                  const colorImages = form.images
+                    .map((img, idx) => ({ ...img, idx }))
+                    .filter((img) => img.color === color);
+                  return (
+                    <div key={color} className="rounded-lg border border-neutral-100 p-3">
+                      <div className="mb-2 flex items-center justify-between">
+                        <span className="text-sm font-semibold">{color}</span>
+                        <span className="text-xs text-neutral-400">{colorImages.length} image(s)</span>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5">
+                        {colorImages.map((img) => (
+                          <div
+                            key={img.idx}
+                            className="group relative aspect-square overflow-hidden rounded-lg border border-neutral-200"
+                          >
+                            <img src={img.url} alt="" className="h-full w-full object-cover" />
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setForm((f) => f ? {
+                                  ...f,
+                                  images: f.images.filter((_, i) => i !== img.idx),
+                                } : f)
+                              }
+                              className="absolute right-1 top-1 rounded-full bg-white/90 p-1 opacity-0 group-hover:opacity-100"
+                            >
+                              <IconTrash size={14} />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
+          {/* Sizes & Tags */}
           <div className="admin-card p-5">
-            <h2 className="mb-4 font-semibold">Variantes</h2>
-            <div className="grid gap-4 md:grid-cols-3">
+            <h2 className="mb-4 font-semibold">Tailles & Tags</h2>
+            <div className="grid gap-4 md:grid-cols-2">
               <ChipInput
                 label="Tailles"
                 value={sizeInput}
@@ -236,21 +292,6 @@ export default function EditProductPage() {
                 onRemove={(v) =>
                   setForm((f) =>
                     f ? { ...f, sizes: f.sizes.filter((s) => s !== v) } : f
-                  )
-                }
-              />
-              <ChipInput
-                label="Couleurs"
-                value={colorInput}
-                onChange={setColorInput}
-                items={form.colors}
-                onAdd={(v) => {
-                  setForm((f) => f && { ...f, colors: [...f.colors, v] });
-                  setColorInput("");
-                }}
-                onRemove={(v) =>
-                  setForm((f) =>
-                    f ? { ...f, colors: f.colors.filter((s) => s !== v) } : f
                   )
                 }
               />
@@ -271,11 +312,147 @@ export default function EditProductPage() {
               />
             </div>
           </div>
+
+          {/* Stock per variant */}
+          <div className="admin-card p-5">
+            <h2 className="mb-4 font-semibold">Stock par variante (Couleur + Taille)</h2>
+            <p className="mb-3 text-xs text-neutral-500">
+              Définissez la quantité disponible pour chaque combinaison couleur + taille.
+            </p>
+
+            <div className="flex flex-wrap items-end gap-2 mb-4">
+              <div className="flex-1 min-w-[120px]">
+                <span className="admin-label">Couleur</span>
+                <select
+                  className="admin-input"
+                  value={variantColor}
+                  onChange={(e) => setVariantColor(e.target.value)}
+                >
+                  <option value="">— Choisir —</option>
+                  {imageColors.map((c) => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex-1 min-w-[120px]">
+                <span className="admin-label">Taille</span>
+                <select
+                  className="admin-input"
+                  value={variantSize}
+                  onChange={(e) => setVariantSize(e.target.value)}
+                >
+                  <option value="">— Choisir —</option>
+                  {form.sizes.map((s) => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="w-24">
+                <span className="admin-label">Quantité</span>
+                <input
+                  type="number"
+                  min={0}
+                  className="admin-input"
+                  value={variantQty}
+                  onChange={(e) => setVariantQty(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") { e.preventDefault(); addVariant(); }
+                  }}
+                />
+              </div>
+              <button type="button" onClick={addVariant} className="admin-btn-outline h-[42px]">
+                <IconPlus size={14} />
+              </button>
+            </div>
+
+            {/* Auto-generate all combinations button */}
+            {imageColors.length > 0 && form.sizes.length > 0 && (
+              <button
+                type="button"
+                className="mb-4 text-xs text-blue-600 hover:underline"
+                onClick={() => {
+                  const newVariants: ProductVariant[] = [];
+                  for (const c of imageColors) {
+                    for (const s of form.sizes) {
+                      if (!form.variants.some((v) => v.color === c && v.size === s)) {
+                        newVariants.push({ color: c, size: s, quantity: 0 });
+                      }
+                    }
+                  }
+                  if (newVariants.length > 0) {
+                    setForm((f) => f && { ...f, variants: [...f.variants, ...newVariants] });
+                  }
+                }}
+              >
+                ✦ Générer toutes les combinaisons manquantes
+              </button>
+            )}
+
+            {form.variants.length > 0 && (
+              <div className="overflow-x-auto rounded-lg border border-neutral-100">
+                <table className="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Couleur</th>
+                      <th>Taille</th>
+                      <th>Quantité</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {form.variants.map((v, i) => (
+                      <tr key={`${v.color}-${v.size}`}>
+                        <td className="font-medium">{v.color}</td>
+                        <td>{v.size}</td>
+                        <td>
+                          <input
+                            type="number"
+                            min={0}
+                            className="admin-input w-20"
+                            value={v.quantity}
+                            onChange={(e) => {
+                              const qty = parseInt(e.target.value) || 0;
+                              setForm((f) => f && ({
+                                ...f,
+                                variants: f.variants.map((vr, vi) =>
+                                  vi === i ? { ...vr, quantity: qty } : vr
+                                ),
+                              }));
+                            }}
+                          />
+                        </td>
+                        <td>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setForm((f) => f ? {
+                                ...f,
+                                variants: f.variants.filter((_, vi) => vi !== i),
+                              } : f)
+                            }
+                            className="rounded p-1 text-red-500 hover:bg-red-50"
+                          >
+                            <IconTrash size={14} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {form.variants.length > 0 && (
+              <p className="mt-2 text-xs text-neutral-500">
+                Stock total : {form.variants.reduce((s, v) => s + v.quantity, 0)} unités
+              </p>
+            )}
+          </div>
         </div>
 
         <div className="space-y-6">
           <div className="admin-card p-5">
-            <h2 className="mb-4 font-semibold">Prix & stock</h2>
+            <h2 className="mb-4 font-semibold">Prix</h2>
             <div className="space-y-4">
               <label className="block">
                 <span className="admin-label">Prix (DA)</span>
@@ -295,15 +472,6 @@ export default function EditProductPage() {
                   onChange={(e) =>
                     setForm({ ...form, comparePrice: e.target.value })
                   }
-                />
-              </label>
-              <label className="block">
-                <span className="admin-label">Stock</span>
-                <input
-                  type="number"
-                  className="admin-input"
-                  value={form.stock}
-                  onChange={(e) => setForm({ ...form, stock: e.target.value })}
                 />
               </label>
             </div>

@@ -18,7 +18,7 @@ export default async function HomePage() {
 
   const heroImage =
     (settings.hero_image as string) ||
-    products.find((p) => p.slug === "caftan-le-royal")?.images[0] ||
+    products.find((p) => p.slug === "caftan-le-royal")?.images[0]?.url ||
     "";
   const heroTitle = (settings.hero_title as string) ?? "CAFTAN LE ROYAL";
   const heroSubtitle = (settings.hero_subtitle as string) ?? undefined;

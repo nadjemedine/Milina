@@ -1,4 +1,15 @@
 // Shared types between client and server
+export interface ProductImage {
+  url: string;
+  color: string;
+}
+
+export interface ProductVariant {
+  color: string;
+  size: string;
+  quantity: number;
+}
+
 export interface ProductDTO {
   id: number;
   slug: string;
@@ -9,13 +20,14 @@ export interface ProductDTO {
   price: number;
   comparePrice: number | null;
   currency: string;
-  stock: number;
-  images: string[];
+  images: ProductImage[];
   sizes: string[];
-  colors: string[];
+  variants: ProductVariant[];
   tags: string[];
   isFeatured: boolean;
   isActive: boolean;
+  totalStock: number;
+  colors: string[]; // computed: unique colors from images
 }
 
 export interface CategoryDTO {

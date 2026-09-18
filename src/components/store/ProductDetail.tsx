@@ -9,7 +9,6 @@ import {
   IconChevronRight,
   IconHeart,
   IconBag,
-  IconHome,
   IconCheck,
 } from "./Icons";
 
@@ -39,6 +38,26 @@ export function ProductDetail({ product, categoryName }: Props) {
     setActive((a) =>
       (a - 1 + product.images.length) % Math.max(1, product.images.length)
     );
+
+  // When color changes, switch to first image of that color
+  const handleColorChange = (c: string) => {
+    setColor(c);
+    const idx = product.images.findIndex((img) => img.color === c);
+    if (idx >= 0) setActive(idx);
+  };
+
+  // When clicking a thumbnail, also update the selected color
+  const handleThumbClick = (i: number) => {
+    setActive(i);
+    const img = product.images[i];
+    if (img?.color) setColor(img.color);
+  };
+
+  // Check variant stock
+  const currentVariant = product.variants?.find(
+    (v) => v.color === color && v.size === size
+  );
+  const variantStock = currentVariant?.quantity ?? 0;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 md:px-8">
@@ -89,7 +108,7 @@ export function ProductDetail({ product, categoryName }: Props) {
         <div className="relative">
           <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-neutral-100 border border-black/5">
             <img
-              src={product.images[active] ?? ""}
+              src={product.images[active]?.url ?? ""}
               alt={product.name}
               className="h-full w-full object-cover"
             />
@@ -120,22 +139,30 @@ export function ProductDetail({ product, categoryName }: Props) {
             )}
           </div>
 
+          {/* Thumbnails with color labels */}
           {product.images.length > 1 && (
             <div className="mt-4 flex gap-2 overflow-x-auto">
-              {product.images.map((src, i) => (
+              {product.images.map((img, i) => (
                 <button
                   key={i}
                   type="button"
-                  onClick={() => setActive(i)}
-                  className={`h-16 w-16 flex-none overflow-hidden rounded-md border-2 transition-smooth ${
+                  onClick={() => handleThumbClick(i)}
+                  className={`flex-none overflow-hidden rounded-md border-2 transition-smooth ${
                     active === i ? "border-black" : "border-transparent"
                   }`}
                 >
-                  <img
-                    src={src}
-                    alt={`${product.name} ${i + 1}`}
-                    className="h-full w-full object-cover"
-                  />
+                  <div className="h-16 w-16 overflow-hidden">
+                    <img
+                      src={img.url}
+                      alt={`${product.name} ${img.color}`}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                  {img.color && (
+                    <div className="bg-neutral-50 px-1 py-0.5 text-center text-[9px] font-medium text-neutral-600 truncate">
+                      {img.color}
+                    </div>
+                  )}
                 </button>
               ))}
             </div>
@@ -172,6 +199,32 @@ export function ProductDetail({ product, categoryName }: Props) {
             <p className="mt-5 text-neutral-600">{product.description}</p>
           )}
 
+          {/* Colors — clicking switches the image */}
+          {product.colors.length > 0 && (
+            <div className="mt-6">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-neutral-600">
+                Couleur : <span>{color}</span>
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {product.colors.map((c) => (
+                  <button
+                    key={c}
+                    type="button"
+                    onClick={() => handleColorChange(c)}
+                    className="rounded-md border px-4 py-2 text-sm transition-smooth hover:opacity-80"
+                    style={{
+                      backgroundColor: color === c ? 'var(--product-variant-btn, #000000)' : 'transparent',
+                      borderColor: color === c ? 'var(--product-variant-btn, #000000)' : 'rgba(0,0,0,0.1)',
+                      color: color === c ? '#ffffff' : 'inherit'
+                    }}
+                  >
+                    {c}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {product.sizes.length > 0 && (
             <div className="mt-6">
               <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-neutral-600">
@@ -197,47 +250,31 @@ export function ProductDetail({ product, categoryName }: Props) {
             </div>
           )}
 
-          {product.colors.length > 0 && (
-            <div className="mt-6">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-neutral-600">
-                Couleur : <span>{color}</span>
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {product.colors.map((c) => (
-                  <button
-                    key={c}
-                    type="button"
-                    onClick={() => setColor(c)}
-                    className="rounded-md border px-4 py-2 text-sm transition-smooth hover:opacity-80"
-                    style={{
-                      backgroundColor: color === c ? 'var(--product-variant-btn, #000000)' : 'transparent',
-                      borderColor: color === c ? 'var(--product-variant-btn, #000000)' : 'rgba(0,0,0,0.1)',
-                      color: color === c ? '#ffffff' : 'inherit'
-                    }}
-                  >
-                    {c}
-                  </button>
-                ))}
-              </div>
-            </div>
+          {/* Stock indicator */}
+          {color && size && (
+            <p className={`mt-3 text-xs font-medium ${variantStock > 0 ? 'text-green-600' : 'text-red-500'}`}>
+              {variantStock > 0 ? `${variantStock} en stock` : "Rupture de stock"}
+            </p>
           )}
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <button
               type="button"
+              disabled={variantStock <= 0 && product.variants.length > 0}
               onClick={() => addItem(product, { size, color })}
-              className="flex flex-1 items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold uppercase tracking-wider transition-smooth hover:opacity-90 shadow-sm"
+              className="flex flex-1 items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold uppercase tracking-wider transition-smooth hover:opacity-90 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
               style={{ backgroundColor: 'var(--add-to-cart-btn, #000000)', color: '#ffffff' }}
             >
-              <IconBag size={18} /> Ajouter au panier
+              <IconBag size={18} /> {variantStock <= 0 && product.variants.length > 0 ? "Rupture" : "Ajouter au panier"}
             </button>
             <button
               type="button"
+              disabled={variantStock <= 0 && product.variants.length > 0}
               onClick={() => {
                 addItem(product, { size, color, silent: true });
                 window.location.href = "/commander";
               }}
-              className="flex items-center justify-center gap-2 rounded-full border px-6 py-3.5 text-sm font-semibold uppercase tracking-wider transition-smooth hover:opacity-80"
+              className="flex items-center justify-center gap-2 rounded-full border px-6 py-3.5 text-sm font-semibold uppercase tracking-wider transition-smooth hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed"
               style={{ backgroundColor: 'var(--order-btn, #ffffff)', borderColor: 'rgba(0,0,0,0.1)' }}
             >
               <IconCheck size={18} />

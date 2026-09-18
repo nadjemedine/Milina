@@ -26,7 +26,7 @@ export default function AdminProductsPage() {
         setLoading(false);
       });
   };
-  useEffect(() => load, []);
+  useEffect(() => { load(); }, []);
 
   const filtered = products.filter(
     (p) =>
@@ -97,7 +97,7 @@ export default function AdminProductsPage() {
                       <div className="flex items-center gap-3">
                         {p.images[0] && (
                           <img
-                            src={p.images[0]}
+                            src={p.images[0].url}
                             alt={p.name}
                             className="h-12 w-12 rounded object-cover"
                           />
@@ -121,12 +121,12 @@ export default function AdminProductsPage() {
                     <td>
                       <span
                         className={`admin-badge ${
-                          p.stock > 0
+                          p.totalStock > 0
                             ? "bg-green-50 text-green-700"
                             : "bg-red-50 text-red-700"
                         }`}
                       >
-                        {p.stock > 0 ? `${p.stock} en stock` : "Rupture"}
+                        {p.totalStock > 0 ? `${p.totalStock} en stock` : "Rupture"}
                       </span>
                     </td>
                     <td>
