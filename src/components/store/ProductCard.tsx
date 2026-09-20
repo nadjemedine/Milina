@@ -40,7 +40,8 @@ export function ProductCard({ product, priority }: Props) {
                   loop
                   muted
                   playsInline
-                  className="zoom-img h-full w-full object-cover"
+                  preload="metadata"
+                  className="zoom-img h-full w-full object-cover pointer-events-none"
                 />
               );
             }

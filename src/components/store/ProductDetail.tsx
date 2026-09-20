@@ -122,6 +122,8 @@ export function ProductDetail({ product, categoryName }: Props) {
                     loop
                     muted
                     playsInline
+                    controls
+                    preload="metadata"
                     className="h-full w-full object-cover"
                   />
                 );
@@ -181,6 +183,7 @@ export function ProductDetail({ product, categoryName }: Props) {
                           src={img.url}
                           muted
                           playsInline
+                          preload="metadata"
                           className="h-full w-full object-cover"
                         />
                       ) : (

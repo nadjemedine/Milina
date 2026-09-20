@@ -82,7 +82,7 @@ export default async function RootLayout({
           <link rel="icon" href={settings.favicon_image} />
         )}
       </head>
-      <body className="min-h-screen bg-[var(--store-bg,#ffffff)] text-black antialiased">
+      <body className="min-h-screen bg-[var(--store-bg,#ffffff)] text-black antialiased overflow-x-hidden">
         <CartProvider>
           <StoreChrome categories={categories} settings={settings}>
             {children}
