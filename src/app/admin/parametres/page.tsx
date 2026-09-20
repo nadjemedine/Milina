@@ -97,11 +97,23 @@ export default function AdminSettingsPage() {
           <div className="mt-8 border-t border-neutral-100 pt-6">
             <h2 className="mb-4 font-serif text-xl font-bold">Images & Logos</h2>
             <div className="grid gap-5 md:grid-cols-2">
-              <ImageField
-                label="Image du Hero"
-                value={settings["hero_image"] ?? ""}
-                onChange={(v) => setSettings({ ...settings, hero_image: v })}
-              />
+              <div className="md:col-span-2 rounded-lg border border-neutral-100 p-4">
+                <MultiMediaField
+                  label="Médias du Hero (Images & Vidéos)"
+                  value={settings["hero_image"] ?? ""}
+                  onChange={(v) => setSettings({ ...settings, hero_image: v })}
+                />
+                <label className="mt-4 block w-full max-w-xs">
+                  <span className="admin-label">Délai de changement automatique (secondes)</span>
+                  <input
+                    type="number"
+                    min="1"
+                    value={settings["hero_interval"] ?? "5"}
+                    onChange={(e) => setSettings({ ...settings, hero_interval: e.target.value })}
+                    className="admin-input"
+                  />
+                </label>
+              </div>
               <div>
                 <ImageField
                   label="Logo principal"
@@ -234,6 +246,80 @@ function ImageField({
             >
               <IconTrash size={14} />
             </button>
+          </div>
+        )}
+      </div>
+    </label>
+  );
+}
+
+function MultiMediaField({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string; // JSON string of string[] or single string
+  onChange: (v: string) => void;
+}) {
+  let items: string[] = [];
+  try {
+    items = value ? JSON.parse(value) : [];
+    if (!Array.isArray(items)) items = value ? [value] : [];
+  } catch {
+    items = value ? [value] : [];
+  }
+
+  return (
+    <label className="block">
+      <span className="admin-label">{label}</span>
+      <div className="flex flex-col gap-2">
+        <input
+          type="file"
+          accept="image/*,video/*"
+          multiple
+          onChange={(e) => {
+            const files = e.target.files;
+            if (!files) return;
+            const newItems = [...items];
+            let loaded = 0;
+            Array.from(files).forEach((file) => {
+              const reader = new FileReader();
+              reader.onloadend = () => {
+                newItems.push(reader.result as string);
+                loaded++;
+                if (loaded === files.length) {
+                  onChange(JSON.stringify(newItems));
+                }
+              };
+              reader.readAsDataURL(file);
+            });
+            e.target.value = "";
+          }}
+          className="admin-input flex-1 file:mr-4 file:rounded-full file:border-0 file:bg-neutral-100 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-black hover:file:bg-neutral-200"
+        />
+        {items.length > 0 && (
+          <div className="flex flex-wrap gap-2 mt-2">
+            {items.map((item, idx) => (
+              <div key={idx} className="group relative h-24 w-24 overflow-hidden rounded border border-neutral-200 bg-neutral-50 flex items-center justify-center p-1">
+                {item.startsWith("data:video/") ? (
+                  <video src={item} className="h-full w-full object-cover" />
+                ) : (
+                  <img src={item} alt="" className="h-full w-full object-cover" />
+                )}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const newItems = items.filter((_, i) => i !== idx);
+                    onChange(JSON.stringify(newItems));
+                  }}
+                  className="absolute right-1 top-1 rounded-full bg-white/90 p-1 opacity-0 group-hover:opacity-100 shadow"
+                >
+                  <IconTrash size={14} />
+                </button>
+              </div>
+            ))}
           </div>
         )}
       </div>

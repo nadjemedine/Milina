@@ -171,7 +171,7 @@ export function StoreChrome({ children, categories, settings }: Props) {
         </div>
 
         {/* Category nav */}
-        <nav className="border-t border-black/5" style={{ backgroundColor: 'var(--menu-bg, #ffffff)' }}>
+        <nav className="border-t border-black/5" style={{ backgroundColor: 'var(--categories-bar-bg, #ffffff)' }}>
           <div className="mx-auto max-w-7xl px-4 md:px-8">
             <div className="no-scrollbar flex items-center gap-2 overflow-x-auto py-3">
               {navCategories.map((c) => {
@@ -185,9 +185,9 @@ export function StoreChrome({ children, categories, settings }: Props) {
                     href={c.slug === "tout" ? "/" : `/categorie/${c.slug}`}
                     className={`whitespace-nowrap rounded-full border px-4 py-1.5 text-sm transition-smooth`}
                     style={{
-                      backgroundColor: isActive ? 'var(--menu-text, #000000)' : 'transparent',
-                      color: isActive ? 'var(--menu-bg, #ffffff)' : 'var(--menu-text, #000000)',
-                      borderColor: isActive ? 'var(--menu-text, #000000)' : 'rgba(0,0,0,0.1)'
+                      backgroundColor: isActive ? 'var(--category-active-bg, #000000)' : 'var(--category-item-bg, #ffffff)',
+                      color: isActive ? 'var(--category-active-text, #ffffff)' : 'var(--category-item-text, #000000)',
+                      borderColor: isActive ? 'var(--category-active-bg, #000000)' : 'rgba(0,0,0,0.1)'
                     }}
                   >
                     {c.name}

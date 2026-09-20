@@ -21,6 +21,16 @@ const COLOR_SECTIONS = [
     ],
   },
   {
+    title: "شريط الأقسام (تحت الهيدر)",
+    fields: [
+      { key: "color_categories_bar_bg", label: "خلفية شريط الأقسام", default: "#ffffff" },
+      { key: "color_category_item_bg", label: "خلفية كل مجموعة (قسم)", default: "#ffffff" },
+      { key: "color_category_item_text", label: "لون نص القسم", default: "#000000" },
+      { key: "color_category_active_bg", label: "خلفية القسم النشط", default: "#000000" },
+      { key: "color_category_active_text", label: "لون نص القسم النشط", default: "#ffffff" },
+    ],
+  },
+  {
     title: "3. الشريط السفلي (للهواتف)",
     fields: [
       { key: "color_bottombar_bg", label: "الخلفية", default: "#ffffff" },

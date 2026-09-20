@@ -16,20 +16,32 @@ export default async function HomePage() {
     // DB unavailable in this render — empty state will show
   }
 
-  const heroImage =
-    (settings.hero_image as string) ||
-    products.find((p) => p.slug === "caftan-le-royal")?.images[0]?.url ||
-    "";
+  let heroMedia: string[] = [];
+  try {
+    if (settings.hero_image) {
+      heroMedia = JSON.parse(settings.hero_image as string);
+      if (!Array.isArray(heroMedia)) heroMedia = [settings.hero_image as string];
+    }
+  } catch {
+    heroMedia = settings.hero_image ? [settings.hero_image as string] : [];
+  }
+  if (heroMedia.length === 0) {
+    const fallback = products.find((p) => p.slug === "caftan-le-royal")?.images[0]?.url;
+    if (fallback) heroMedia = [fallback];
+  }
+
   const heroTitle = (settings.hero_title as string) ?? "CAFTAN LE ROYAL";
   const heroSubtitle = (settings.hero_subtitle as string) ?? undefined;
+  const heroInterval = parseInt((settings.hero_interval as string) || "5", 10);
 
   return (
     <div>
-      {heroImage && (
+      {heroMedia.length > 0 && (
         <Hero
           title={heroTitle}
           subtitle={heroSubtitle}
-          imageUrl={heroImage}
+          mediaUrls={heroMedia}
+          interval={heroInterval}
           ctaHref="/"
         />
       )}

@@ -49,7 +49,6 @@ export default function NewProductPage() {
   const [categories, setCategories] = useState<CategoryDTO[]>([]);
   const [sizeInput, setSizeInput] = useState("");
   const [tagInput, setTagInput] = useState("");
-  const [imageColorInput, setImageColorInput] = useState("");
   const [variantColor, setVariantColor] = useState("");
   const [variantSize, setVariantSize] = useState("");
   const [variantQty, setVariantQty] = useState("");
@@ -189,38 +188,28 @@ export default function NewProductPage() {
 
           {/* Images with color linking */}
           <div className="admin-card p-5">
-            <h2 className="mb-4 font-semibold">Images & Couleurs</h2>
+            <h2 className="mb-4 font-semibold">Images & Vidéos</h2>
             <p className="mb-3 text-xs text-neutral-500">
-              Chaque image est associée à une couleur. Entrez le nom de la couleur puis choisissez les images.
+              Ajoutez vos images et vidéos, puis spécifiez la couleur sous chaque média.
             </p>
-            <div className="flex gap-2 mb-4">
-              <input
-                placeholder="Nom de la couleur (ex: Noir, Beige...)"
-                value={imageColorInput}
-                onChange={(e) => setImageColorInput(e.target.value)}
-                className="admin-input flex-1"
-              />
-              <label className="admin-btn-outline cursor-pointer whitespace-nowrap">
+            <div className="mb-4">
+              <label className="admin-btn-outline cursor-pointer whitespace-nowrap inline-flex">
                 <IconPlus size={14} />
-                <span className="ml-1">Ajouter images</span>
+                <span className="ml-1">Ajouter médias (Images/Vidéos)</span>
                 <input
                   type="file"
-                  accept="image/*"
+                  accept="image/*,video/*"
                   multiple
                   className="hidden"
                   onChange={(e) => {
                     const files = e.target.files;
-                    const color = imageColorInput.trim();
-                    if (!files || !color) {
-                      alert("Veuillez entrer le nom de la couleur d'abord");
-                      return;
-                    }
+                    if (!files) return;
                     Array.from(files).forEach((file) => {
                       const reader = new FileReader();
                       reader.onloadend = () => {
                         setForm((f) => ({
                           ...f,
-                          images: [...f.images, { url: reader.result as string, color }],
+                          images: [...f.images, { url: reader.result as string, color: "" }],
                         }));
                       };
                       reader.readAsDataURL(file);
@@ -231,44 +220,44 @@ export default function NewProductPage() {
               </label>
             </div>
 
-            {/* Group images by color */}
-            {imageColors.length > 0 && (
-              <div className="space-y-4">
-                {imageColors.map((color) => {
-                  const colorImages = form.images
-                    .map((img, idx) => ({ ...img, idx }))
-                    .filter((img) => img.color === color);
-                  return (
-                    <div key={color} className="rounded-lg border border-neutral-100 p-3">
-                      <div className="mb-2 flex items-center justify-between">
-                        <span className="text-sm font-semibold">{color}</span>
-                        <span className="text-xs text-neutral-400">{colorImages.length} image(s)</span>
-                      </div>
-                      <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5">
-                        {colorImages.map((img) => (
-                          <div
-                            key={img.idx}
-                            className="group relative aspect-square overflow-hidden rounded-lg border border-neutral-200"
-                          >
-                            <img src={img.url} alt="" className="h-full w-full object-cover" />
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setForm((f) => ({
-                                  ...f,
-                                  images: f.images.filter((_, i) => i !== img.idx),
-                                }))
-                              }
-                              className="absolute right-1 top-1 rounded-full bg-white/90 p-1 opacity-0 group-hover:opacity-100"
-                            >
-                              <IconTrash size={14} />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
+            {form.images.length > 0 && (
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+                {form.images.map((img, idx) => (
+                  <div key={idx} className="group relative rounded-lg border border-neutral-200 p-2">
+                    <div className="relative mb-2 aspect-square w-full overflow-hidden rounded-md bg-neutral-100">
+                      {img.url.startsWith("data:video/") ? (
+                        <video src={img.url} className="h-full w-full object-cover" controls />
+                      ) : (
+                        <img src={img.url} alt="" className="h-full w-full object-cover" />
+                      )}
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setForm((f) => ({
+                            ...f,
+                            images: f.images.filter((_, i) => i !== idx),
+                          }))
+                        }
+                        className="absolute right-1 top-1 rounded-full bg-white/90 p-1 text-red-500 shadow-sm opacity-0 transition-opacity group-hover:opacity-100"
+                      >
+                        <IconTrash size={14} />
+                      </button>
                     </div>
-                  );
-                })}
+                    <input
+                      placeholder="Couleur (ex: Noir)"
+                      value={img.color}
+                      onChange={(e) => {
+                        const newColor = e.target.value;
+                        setForm((f) => {
+                          const newImages = [...f.images];
+                          newImages[idx] = { ...newImages[idx], color: newColor };
+                          return { ...f, images: newImages };
+                        });
+                      }}
+                      className="admin-input h-8 w-full px-2 py-1 text-sm"
+                    />
+                  </div>
+                ))}
               </div>
             )}
           </div>

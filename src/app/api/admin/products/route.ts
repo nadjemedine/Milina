@@ -74,6 +74,6 @@ export async function POST(req: NextRequest) {
 
     return Response.json({ ok: true, product: inserted });
   } catch (err) {
-    return Response.json({ ok: false, error: String(err) }, { status: 500 });
+    return Response.json({ ok: false, error: err instanceof Error ? err.message : String(err) }, { status: 500 });
   }
 }
