@@ -18,7 +18,25 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
+    let body;
+    const contentType = req.headers.get("content-type") || "";
+    if (contentType.includes("multipart/form-data")) {
+      const formData = await req.formData();
+      body = JSON.parse(formData.get("payload") as string);
+      for (const img of body.images || []) {
+        if (img.fileIndex !== undefined) {
+          const file = formData.get(`file_${img.fileIndex}`) as File;
+          if (file) {
+            const buffer = Buffer.from(await file.arrayBuffer());
+            const base64 = buffer.toString("base64");
+            img.url = `data:${file.type};base64,${base64}`;
+          }
+          delete img.fileIndex;
+        }
+      }
+    } else {
+      body = await req.json();
+    }
     const {
       slug,
       name,

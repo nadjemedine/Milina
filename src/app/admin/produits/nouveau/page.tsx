@@ -42,6 +42,10 @@ function compressImage(file: File, maxSize = 800, quality = 0.7): Promise<string
   });
 }
 
+interface FormImage extends ProductImage {
+  file?: File;
+}
+
 interface Form {
   slug: string;
   name: string;
@@ -50,7 +54,7 @@ interface Form {
   price: string;
   comparePrice: string;
   currency: string;
-  images: ProductImage[];
+  images: FormImage[];
   sizes: string[];
   variants: ProductVariant[];
   tags: string[];
@@ -107,19 +111,44 @@ export default function NewProductPage() {
     e.preventDefault();
     setError(null);
     setSubmitting(true);
-    const payload = {
-      ...form,
-      slug: form.slug || slugify(form.name),
-      price: parseFloat(form.price) || 0,
-      comparePrice: form.comparePrice ? parseFloat(form.comparePrice) : null,
-    };
+    
     try {
+      const payload: any = {
+        ...form,
+        slug: form.slug || slugify(form.name),
+        price: parseFloat(form.price) || 0,
+        comparePrice: form.comparePrice ? parseFloat(form.comparePrice) : null,
+        images: [],
+      };
+
+      const formData = new FormData();
+      let hasFiles = false;
+
+      form.images.forEach((img, i) => {
+        if (img.file) {
+          hasFiles = true;
+          formData.append(`file_${i}`, img.file);
+          payload.images.push({ color: img.color, fileIndex: i });
+        } else {
+          payload.images.push({ color: img.color, url: img.url });
+        }
+      });
+
+      formData.append("payload", JSON.stringify(payload));
+
       const res = await fetch("/api/admin/products", {
         method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(payload),
+        headers: hasFiles ? undefined : { "content-type": "application/json" },
+        body: hasFiles ? formData : JSON.stringify(payload),
       });
-      const data = await res.json();
+      
+      let data;
+      try {
+        data = await res.json();
+      } catch (err) {
+        throw new Error(res.status === 413 ? "Le fichier est trop volumineux (limite ~4.5MB)" : "Erreur de serveur");
+      }
+      
       if (!res.ok || !data.ok) throw new Error(data.error ?? "Erreur");
       router.push("/admin/produits");
     } catch (err) {
@@ -236,11 +265,19 @@ export default function NewProductPage() {
                     const files = e.target.files;
                     if (!files) return;
                     for (const file of Array.from(files)) {
-                      const compressed = await compressImage(file);
-                      setForm((f) => ({
-                        ...f,
-                        images: [...f.images, { url: compressed, color: "" }],
-                      }));
+                      if (file.type.startsWith("video/")) {
+                        // Store the original video file to be sent via FormData
+                        setForm((f) => ({
+                          ...f,
+                          images: [...f.images, { url: URL.createObjectURL(file), color: "", file }],
+                        }));
+                      } else {
+                        const compressed = await compressImage(file);
+                        setForm((f) => ({
+                          ...f,
+                          images: [...f.images, { url: compressed, color: "" }],
+                        }));
+                      }
                     }
                     e.target.value = "";
                   }}
