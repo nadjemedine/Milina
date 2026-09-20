@@ -41,7 +41,7 @@ export function ProductCard({ product, priority }: Props) {
                   muted
                   playsInline
                   preload="metadata"
-                  className="zoom-img h-full w-full object-cover pointer-events-none"
+                  className="zoom-img h-full w-full object-contain pointer-events-none bg-neutral-50"
                 />
               );
             }
@@ -50,7 +50,7 @@ export function ProductCard({ product, priority }: Props) {
                 src={url}
                 alt={product.name}
                 loading={priority ? "eager" : "lazy"}
-                className="zoom-img h-full w-full object-cover"
+                className="zoom-img h-full w-full object-contain bg-neutral-50"
               />
             );
           })()}

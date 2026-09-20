@@ -109,7 +109,7 @@ export function ProductDetail({ product, categoryName }: Props) {
       <div className="grid gap-6 md:gap-8 md:grid-cols-2">
         {/* Image/Video gallery */}
         <div className="relative">
-          <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-neutral-100 border border-black/5">
+          <div className="relative flex items-center justify-center aspect-[3/4] overflow-hidden rounded-2xl bg-neutral-50 border border-black/5">
             {(() => {
               const currentUrl = product.images[active]?.url ?? "";
               const isVideo = /\.(mp4|webm|mov|ogg)(\?|$)/i.test(currentUrl) || currentUrl.includes("video");
@@ -124,7 +124,7 @@ export function ProductDetail({ product, categoryName }: Props) {
                     playsInline
                     controls
                     preload="metadata"
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-contain"
                   />
                 );
               }
@@ -132,7 +132,7 @@ export function ProductDetail({ product, categoryName }: Props) {
                 <img
                   src={currentUrl}
                   alt={product.name}
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-contain"
                 />
               );
             })()}
@@ -177,20 +177,20 @@ export function ProductDetail({ product, categoryName }: Props) {
                       active === i ? "border-black" : "border-transparent"
                     }`}
                   >
-                    <div className="h-16 w-16 overflow-hidden">
+                    <div className="h-16 w-16 overflow-hidden bg-neutral-100 flex items-center justify-center">
                       {isVid ? (
                         <video
                           src={img.url}
                           muted
                           playsInline
                           preload="metadata"
-                          className="h-full w-full object-cover"
+                          className="h-full w-full object-contain"
                         />
                       ) : (
                         <img
                           src={img.url}
                           alt={`${product.name} ${img.color}`}
-                          className="h-full w-full object-cover"
+                          className="h-full w-full object-contain"
                         />
                       )}
                     </div>
