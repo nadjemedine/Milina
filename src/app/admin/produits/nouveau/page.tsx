@@ -11,6 +11,37 @@ import {
 } from "@/components/store/Icons";
 import type { CategoryDTO, ProductImage, ProductVariant } from "@/lib/types";
 
+// Compress image to reduce base64 size (max 800px, JPEG quality 0.7)
+function compressImage(file: File, maxSize = 800, quality = 0.7): Promise<string> {
+  return new Promise((resolve) => {
+    if (file.type.startsWith("video/")) {
+      // Don't compress videos, just read as base64
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.readAsDataURL(file);
+      return;
+    }
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let w = img.width;
+      let h = img.height;
+      if (w > maxSize || h > maxSize) {
+        if (w > h) { h = Math.round(h * maxSize / w); w = maxSize; }
+        else { w = Math.round(w * maxSize / h); h = maxSize; }
+      }
+      const canvas = document.createElement("canvas");
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext("2d")!;
+      ctx.drawImage(img, 0, 0, w, h);
+      resolve(canvas.toDataURL("image/jpeg", quality));
+    };
+    img.src = url;
+  });
+}
+
 interface Form {
   slug: string;
   name: string;
@@ -201,19 +232,16 @@ export default function NewProductPage() {
                   accept="image/*,video/*"
                   multiple
                   className="hidden"
-                  onChange={(e) => {
+                  onChange={async (e) => {
                     const files = e.target.files;
                     if (!files) return;
-                    Array.from(files).forEach((file) => {
-                      const reader = new FileReader();
-                      reader.onloadend = () => {
-                        setForm((f) => ({
-                          ...f,
-                          images: [...f.images, { url: reader.result as string, color: "" }],
-                        }));
-                      };
-                      reader.readAsDataURL(file);
-                    });
+                    for (const file of Array.from(files)) {
+                      const compressed = await compressImage(file);
+                      setForm((f) => ({
+                        ...f,
+                        images: [...f.images, { url: compressed, color: "" }],
+                      }));
+                    }
                     e.target.value = "";
                   }}
                 />
