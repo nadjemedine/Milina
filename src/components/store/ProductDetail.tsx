@@ -58,6 +58,9 @@ export function ProductDetail({ product, categoryName }: Props) {
     (v) => v.color === color && v.size === size
   );
   const variantStock = currentVariant?.quantity ?? 0;
+  // Stock tracking is only active if at least one variant has a quantity > 0
+  const hasStockTracking = product.variants?.some((v) => v.quantity > 0) ?? false;
+  const isOutOfStock = hasStockTracking && variantStock <= 0 && product.variants.length > 0;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 md:px-8">
@@ -250,8 +253,8 @@ export function ProductDetail({ product, categoryName }: Props) {
             </div>
           )}
 
-          {/* Stock indicator */}
-          {color && size && (
+          {/* Stock indicator — only show if stock tracking is active */}
+          {hasStockTracking && color && size && (
             <p className={`mt-3 text-xs font-medium ${variantStock > 0 ? 'text-green-600' : 'text-red-500'}`}>
               {variantStock > 0 ? `${variantStock} en stock` : "Rupture de stock"}
             </p>
@@ -260,16 +263,16 @@ export function ProductDetail({ product, categoryName }: Props) {
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <button
               type="button"
-              disabled={variantStock <= 0 && product.variants.length > 0}
+              disabled={isOutOfStock}
               onClick={() => addItem(product, { size, color })}
               className="flex flex-1 items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold uppercase tracking-wider transition-smooth hover:opacity-90 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
               style={{ backgroundColor: 'var(--add-to-cart-btn, #000000)', color: '#ffffff' }}
             >
-              <IconBag size={18} /> {variantStock <= 0 && product.variants.length > 0 ? "Rupture" : "Ajouter au panier"}
+              <IconBag size={18} /> {isOutOfStock ? "Rupture" : "Ajouter au panier"}
             </button>
             <button
               type="button"
-              disabled={variantStock <= 0 && product.variants.length > 0}
+              disabled={isOutOfStock}
               onClick={() => {
                 addItem(product, { size, color, silent: true });
                 window.location.href = "/commander";
