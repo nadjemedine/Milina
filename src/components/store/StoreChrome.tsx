@@ -183,7 +183,7 @@ export function StoreChrome({ children, categories, settings }: Props) {
                   <Link
                     key={c.slug}
                     href={c.slug === "tout" ? "/" : `/categorie/${c.slug}`}
-                    className={`whitespace-nowrap rounded-full border px-4 py-1.5 text-sm transition-smooth`}
+                    className={`shrink-0 whitespace-nowrap rounded-full border px-4 py-1.5 text-sm transition-smooth`}
                     style={{
                       backgroundColor: isActive ? 'var(--category-active-bg, #000000)' : 'var(--category-item-bg, #ffffff)',
                       color: isActive ? 'var(--category-active-text, #ffffff)' : 'var(--category-item-text, #000000)',

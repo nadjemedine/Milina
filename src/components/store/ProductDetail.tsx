@@ -173,7 +173,7 @@ export function ProductDetail({ product, categoryName }: Props) {
                     key={i}
                     type="button"
                     onClick={() => handleThumbClick(i)}
-                    className={`flex-none overflow-hidden rounded-md border-2 transition-smooth ${
+                    className={`shrink-0 flex-none overflow-hidden rounded-md border-2 transition-smooth ${
                       active === i ? "border-black" : "border-transparent"
                     }`}
                   >
