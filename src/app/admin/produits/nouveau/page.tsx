@@ -121,32 +121,37 @@ export default function NewProductPage() {
         images: [],
       };
 
-      const formData = new FormData();
-      let hasFiles = false;
+      // Create Supabase client for uploading
+      const { createClient } = await import("@/utils/supabase/client");
+      const supabase = createClient();
 
-      form.images.forEach((img, i) => {
+      for (const img of form.images) {
         if (img.file) {
-          hasFiles = true;
-          formData.append(`file_${i}`, img.file);
-          payload.images.push({ color: img.color, fileIndex: i });
+          // Upload to Supabase Storage bucket 'media'
+          const fileExt = img.file.name.split(".").pop();
+          const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+          const { data, error } = await supabase.storage.from("media").upload(fileName, img.file);
+          if (error) {
+            throw new Error(`Échec de l'upload: ${error.message}`);
+          }
+          const { data: publicUrlData } = supabase.storage.from("media").getPublicUrl(data.path);
+          payload.images.push({ color: img.color, url: publicUrlData.publicUrl });
         } else {
           payload.images.push({ color: img.color, url: img.url });
         }
-      });
-
-      formData.append("payload", JSON.stringify(payload));
+      }
 
       const res = await fetch("/api/admin/products", {
         method: "POST",
-        headers: hasFiles ? undefined : { "content-type": "application/json" },
-        body: hasFiles ? formData : JSON.stringify(payload),
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(payload),
       });
       
       let data;
       try {
         data = await res.json();
       } catch (err) {
-        throw new Error(res.status === 413 ? "Le fichier est trop volumineux (limite ~4.5MB)" : "Erreur de serveur");
+        throw new Error(res.status === 413 ? "Le fichier est trop volumineux" : "Erreur de serveur");
       }
       
       if (!res.ok || !data.ok) throw new Error(data.error ?? "Erreur");

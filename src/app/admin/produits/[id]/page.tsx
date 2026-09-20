@@ -125,11 +125,33 @@ export default function EditProductPage() {
     setError(null);
     setSubmitting(true);
     try {
-      const payload = {
+      const payload: any = {
         ...form,
         price: parseFloat(form.price) || 0,
         comparePrice: form.comparePrice ? parseFloat(form.comparePrice) : null,
+        images: [],
       };
+
+      // Create Supabase client for uploading
+      const { createClient } = await import("@/utils/supabase/client");
+      const supabase = createClient();
+
+      for (const img of form.images as any[]) {
+        if (img.file) {
+          // Upload to Supabase Storage bucket 'media'
+          const fileExt = img.file.name.split(".").pop();
+          const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+          const { data, error } = await supabase.storage.from("media").upload(fileName, img.file);
+          if (error) {
+            throw new Error(`Échec de l'upload: ${error.message}`);
+          }
+          const { data: publicUrlData } = supabase.storage.from("media").getPublicUrl(data.path);
+          payload.images.push({ color: img.color, url: publicUrlData.publicUrl });
+        } else {
+          payload.images.push({ color: img.color, url: img.url });
+        }
+      }
+
       const res = await fetch(`/api/admin/products/${params.id}`, {
         method: "PUT",
         headers: { "content-type": "application/json" },
@@ -239,7 +261,7 @@ export default function EditProductPage() {
                 <span className="ml-1">Ajouter images</span>
                 <input
                   type="file"
-                  accept="image/*"
+                  accept="image/*,video/*"
                   multiple
                   className="hidden"
                   onChange={async (e) => {
@@ -250,11 +272,18 @@ export default function EditProductPage() {
                       return;
                     }
                     for (const file of Array.from(files)) {
-                      const compressed = await compressImage(file);
-                      setForm((f) => f && ({
-                        ...f,
-                        images: [...f.images, { url: compressed, color }],
-                      }));
+                      if (file.type.startsWith("video/")) {
+                        setForm((f) => f && ({
+                          ...f,
+                          images: [...f.images, { url: URL.createObjectURL(file), color, file } as any],
+                        }));
+                      } else {
+                        const compressed = await compressImage(file);
+                        setForm((f) => f && ({
+                          ...f,
+                          images: [...f.images, { url: compressed, color }],
+                        }));
+                      }
                     }
                     e.target.value = "";
                   }}
