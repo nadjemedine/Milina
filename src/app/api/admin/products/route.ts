@@ -5,6 +5,16 @@ import { adminListProducts } from "@/lib/data";
 import { eq } from "drizzle-orm";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
+
+// Allow large base64 image payloads
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: "50mb",
+    },
+  },
+};
 
 export async function GET() {
   try {
