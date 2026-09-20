@@ -109,7 +109,7 @@ export function ProductDetail({ product, categoryName }: Props) {
       <div className="grid gap-6 md:gap-8 md:grid-cols-2">
         {/* Image/Video gallery */}
         <div className="relative">
-          <div className="relative flex items-center justify-center aspect-[3/4] overflow-hidden rounded-2xl bg-neutral-50 border border-black/5">
+          <div className="relative flex flex-col items-center justify-center w-full overflow-hidden rounded-2xl bg-neutral-50 border border-black/5">
             {(() => {
               const currentUrl = product.images[active]?.url ?? "";
               const isVideo = /\.(mp4|webm|mov|ogg)(\?|$)/i.test(currentUrl) || currentUrl.includes("video");
@@ -124,7 +124,7 @@ export function ProductDetail({ product, categoryName }: Props) {
                     playsInline
                     controls
                     preload="metadata"
-                    className="h-full w-full object-contain"
+                    className="w-full h-auto max-h-[80vh] object-contain"
                   />
                 );
               }
@@ -132,7 +132,7 @@ export function ProductDetail({ product, categoryName }: Props) {
                 <img
                   src={currentUrl}
                   alt={product.name}
-                  className="h-full w-full object-contain"
+                  className="w-full h-auto max-h-[80vh] object-contain"
                 />
               );
             })()}
