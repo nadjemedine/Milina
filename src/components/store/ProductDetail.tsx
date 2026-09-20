@@ -106,15 +106,34 @@ export function ProductDetail({ product, categoryName }: Props) {
         <span className="text-black">{product.name}</span>
       </nav>
 
-      <div className="grid gap-8 md:grid-cols-2">
-        {/* Image gallery */}
+      <div className="grid gap-6 md:gap-8 md:grid-cols-2">
+        {/* Image/Video gallery */}
         <div className="relative">
           <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-neutral-100 border border-black/5">
-            <img
-              src={product.images[active]?.url ?? ""}
-              alt={product.name}
-              className="h-full w-full object-cover"
-            />
+            {(() => {
+              const currentUrl = product.images[active]?.url ?? "";
+              const isVideo = /\.(mp4|webm|mov|ogg)(\?|$)/i.test(currentUrl) || currentUrl.includes("video");
+              if (isVideo) {
+                return (
+                  <video
+                    key={currentUrl}
+                    src={currentUrl}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="h-full w-full object-cover"
+                  />
+                );
+              }
+              return (
+                <img
+                  src={currentUrl}
+                  alt={product.name}
+                  className="h-full w-full object-cover"
+                />
+              );
+            })()}
             {onSale && (
               <span className="absolute left-4 top-4 rounded-full bg-black px-3 py-1 text-xs font-semibold uppercase tracking-wider text-white shadow-sm">
                 -{discount}% Réduction
@@ -144,30 +163,42 @@ export function ProductDetail({ product, categoryName }: Props) {
 
           {/* Thumbnails with color labels */}
           {product.images.length > 1 && (
-            <div className="mt-4 flex gap-2 overflow-x-auto">
-              {product.images.map((img, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  onClick={() => handleThumbClick(i)}
-                  className={`flex-none overflow-hidden rounded-md border-2 transition-smooth ${
-                    active === i ? "border-black" : "border-transparent"
-                  }`}
-                >
-                  <div className="h-16 w-16 overflow-hidden">
-                    <img
-                      src={img.url}
-                      alt={`${product.name} ${img.color}`}
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                  {img.color && (
-                    <div className="bg-neutral-50 px-1 py-0.5 text-center text-[9px] font-medium text-neutral-600 truncate">
-                      {img.color}
+            <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+              {product.images.map((img, i) => {
+                const isVid = /\.(mp4|webm|mov|ogg)(\?|$)/i.test(img.url) || img.url.includes("video");
+                return (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => handleThumbClick(i)}
+                    className={`flex-none overflow-hidden rounded-md border-2 transition-smooth ${
+                      active === i ? "border-black" : "border-transparent"
+                    }`}
+                  >
+                    <div className="h-16 w-16 overflow-hidden">
+                      {isVid ? (
+                        <video
+                          src={img.url}
+                          muted
+                          playsInline
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <img
+                          src={img.url}
+                          alt={`${product.name} ${img.color}`}
+                          className="h-full w-full object-cover"
+                        />
+                      )}
                     </div>
-                  )}
-                </button>
-              ))}
+                    {img.color && (
+                      <div className="bg-neutral-50 px-1 py-0.5 text-center text-[9px] font-medium text-neutral-600 truncate max-w-[64px]">
+                        {img.color}
+                      </div>
+                    )}
+                  </button>
+                );
+              })}
             </div>
           )}
         </div>

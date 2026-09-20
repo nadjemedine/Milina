@@ -40,7 +40,7 @@ export function Hero({ title, subtitle, mediaUrls, interval = 5, ctaHref = "/cat
     <section className="relative overflow-hidden group">
       <div className="relative w-full h-[60vh] md:h-[80vh]">
         {mediaUrls.map((url, idx) => {
-          const isVideo = url.startsWith("data:video/") || !!url.match(/\.(mp4|mov|webm)$/i);
+          const isVideo = url.startsWith("data:video/") || /\.(mp4|mov|webm|ogg)(\?|$)/i.test(url) || url.includes("video");
           return (
             <div
               key={idx}

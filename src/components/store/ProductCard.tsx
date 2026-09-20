@@ -29,12 +29,30 @@ export function ProductCard({ product, priority }: Props) {
         style={{ backgroundColor: 'var(--product-card-bg, #f5f5f5)' }}
       >
         <Link href={`/produit/${product.slug}`} aria-label={product.name}>
-          <img
-            src={product.images[0]?.url ?? ""}
-            alt={product.name}
-            loading={priority ? "eager" : "lazy"}
-            className="zoom-img h-full w-full object-cover"
-          />
+          {(() => {
+            const url = product.images[0]?.url ?? "";
+            const isVideo = /\.(mp4|webm|mov|ogg)(\?|$)/i.test(url) || url.includes("video");
+            if (isVideo) {
+              return (
+                <video
+                  src={url}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="zoom-img h-full w-full object-cover"
+                />
+              );
+            }
+            return (
+              <img
+                src={url}
+                alt={product.name}
+                loading={priority ? "eager" : "lazy"}
+                className="zoom-img h-full w-full object-cover"
+              />
+            );
+          })()}
         </Link>
 
         {onSale && (
