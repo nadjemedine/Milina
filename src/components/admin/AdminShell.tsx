@@ -29,6 +29,7 @@ const NAV = [
   { href: "/admin/commandes", label: "Commandes", icon: IconTrend },
   { href: "/admin/clients", label: "Clients", icon: IconUsers },
   { href: "/admin/messages", label: "Messages", icon: IconMessage },
+  { href: "/admin/tarifs-livraison", label: "Tarifs Livraison", icon: IconSettings },
   { href: "/admin/parametres", label: "Paramètres", icon: IconSettings },
   { href: "/admin/apparence", label: "Couleurs", icon: IconPalette },
 ];
