@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { IconArrowRight, IconArrowLeft, IconPlay, IconPause } from "./Icons";
 
 interface Props {
@@ -58,10 +59,12 @@ export function Hero({ title, subtitle, mediaUrls, interval = 5, ctaHref = "/cat
                   playsInline
                 />
               ) : (
-                <img
+                <Image
                   src={url}
                   alt={title}
-                  className="w-full h-full object-cover"
+                  fill
+                  priority={idx === 0}
+                  className="object-cover"
                 />
               )}
             </div>

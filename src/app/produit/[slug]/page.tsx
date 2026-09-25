@@ -4,7 +4,7 @@ import { getProductBySlug, getProducts, getCategories } from "@/lib/data";
 import { ProductDetail } from "@/components/store/ProductDetail";
 import { ProductCard } from "@/components/store/ProductCard";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 interface Props {
   params: Promise<{ slug: string }>;

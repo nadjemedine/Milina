@@ -1,7 +1,7 @@
 import { getAllSettings } from "@/lib/data";
 import { IconFacebook, IconInstagram, IconWhatsApp, IconMail, IconTikTok } from "@/components/store/Icons";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function ContactPage() {
   const settings = await getAllSettings();

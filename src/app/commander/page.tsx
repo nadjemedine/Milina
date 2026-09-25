@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import CheckoutClient from "./CheckoutClient";
 import { WILAYAS } from "@/lib/format";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function CommanderPage() {
   const row = await db.select().from(settings).where(eq(settings.key, "shippingRates")).limit(1);

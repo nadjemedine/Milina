@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import type { ProductDTO } from "@/lib/types";
 import { useCart } from "./CartProvider";
 import { IconHeart, IconBag } from "./Icons";
@@ -46,11 +47,13 @@ export function ProductCard({ product, priority }: Props) {
               );
             }
             return (
-              <img
+              <Image
                 src={url}
                 alt={product.name}
-                loading={priority ? "eager" : "lazy"}
-                className="zoom-img h-full w-full object-cover"
+                fill
+                sizes="(max-width: 768px) 50vw, 25vw"
+                priority={priority}
+                className="zoom-img object-cover"
               />
             );
           })()}

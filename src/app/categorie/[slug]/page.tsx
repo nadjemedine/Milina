@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { getCategories, getProducts } from "@/lib/data";
 import { ProductGrid } from "@/components/store/ProductGrid";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 interface Props {
   params: Promise<{ slug: string }>;

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import type { ProductDTO } from "@/lib/types";
 import { useCart } from "./CartProvider";
@@ -129,9 +130,12 @@ export function ProductDetail({ product, categoryName }: Props) {
                 );
               }
               return (
-                <img
+                <Image
                   src={currentUrl}
                   alt={product.name}
+                  width={800}
+                  height={800}
+                  priority
                   className="w-full h-auto max-h-[80vh] object-contain max-w-full"
                 />
               );
@@ -187,9 +191,11 @@ export function ProductDetail({ product, categoryName }: Props) {
                           className="h-full w-full object-contain"
                         />
                       ) : (
-                        <img
+                        <Image
                           src={img.url}
                           alt={`${product.name} ${img.color}`}
+                          width={100}
+                          height={100}
                           className="h-full w-full object-contain"
                         />
                       )}

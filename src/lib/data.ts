@@ -450,36 +450,25 @@ export async function adminListOrders(): Promise<OrderDTO[]> {
 }
 
 export async function adminStats() {
-  const [productCount] = await db
-    .select({ count: sql<number>`count(*)::int` })
-    .from(products);
-  const [categoryCount] = await db
-    .select({ count: sql<number>`count(*)::int` })
-    .from(categories);
-  const [orderCount] = await db
-    .select({ count: sql<number>`count(*)::int` })
-    .from(orders);
-  const [customerCount] = await db
-    .select({ count: sql<number>`count(*)::int` })
-    .from(customers);
-  const [revenue] = await db
-    .select({ total: sql<string>`coalesce(sum(total), 0)::text` })
-    .from(orders);
-
-  const recentOrders = await db
-    .select()
-    .from(orders)
-    .orderBy(desc(orders.createdAt))
-    .limit(5);
-
-  const cats = await db.select().from(categories);
-  const productsByCategory = await db
-    .select({
-      categoryId: products.categoryId,
-      count: sql<number>`count(*)::int`,
-    })
-    .from(products)
-    .groupBy(products.categoryId);
+  const [
+    [productCount],
+    [categoryCount],
+    [orderCount],
+    [customerCount],
+    [revenue],
+    recentOrders,
+    cats,
+    productsByCategory,
+  ] = await Promise.all([
+    db.select({ count: sql<number>`count(*)::int` }).from(products),
+    db.select({ count: sql<number>`count(*)::int` }).from(categories),
+    db.select({ count: sql<number>`count(*)::int` }).from(orders),
+    db.select({ count: sql<number>`count(*)::int` }).from(customers),
+    db.select({ total: sql<string>`coalesce(sum(total), 0)::text` }).from(orders),
+    db.select().from(orders).orderBy(desc(orders.createdAt)).limit(5),
+    db.select().from(categories),
+    db.select({ categoryId: products.categoryId, count: sql<number>`count(*)::int` }).from(products).groupBy(products.categoryId),
+  ]);
   const catMap = new Map(cats.map((c) => [c.id, c.name]));
 
   return {

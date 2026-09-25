@@ -2,7 +2,7 @@ import { getProducts, getAllSettings, getCategories } from "@/lib/data";
 import { Hero } from "@/components/store/Hero";
 import { ProductGrid } from "@/components/store/ProductGrid";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function HomePage() {
   let products: Awaited<ReturnType<typeof getProducts>> = [];
