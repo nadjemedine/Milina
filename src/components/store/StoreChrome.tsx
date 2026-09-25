@@ -53,7 +53,7 @@ export function StoreChrome({ children, categories, settings }: Props) {
     (settings.facebook_url as string) ?? "https://facebook.com/milina.luxury";
   const tiktokUrl = (settings.tiktok_url as string) ?? "https://tiktok.com/@milina.luxury";
   const whatsappNumber = (settings.whatsapp_number as string) ?? "213660989407";
-  const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}`;
+  const whatsappUrl = `https://wa.me/${String(whatsappNumber).replace(/[^0-9]/g, '')}`;
   const whatsappVisible =
     settings.whatsapp_visible !== undefined ? settings.whatsapp_visible === true || settings.whatsapp_visible === "true" : true;
 

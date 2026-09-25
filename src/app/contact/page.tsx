@@ -10,7 +10,7 @@ export default async function ContactPage() {
   const instagram = (settings.instagram_url as string) ?? "https://instagram.com/milina.luxury";
   const tiktok = (settings.tiktok_url as string) ?? "https://tiktok.com/@milina.luxury";
   const whatsappNumber = (settings.whatsapp_number as string) ?? "213660989407";
-  const whatsapp = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}`;
+  const whatsapp = `https://wa.me/${String(whatsappNumber).replace(/[^0-9]/g, '')}`;
   const email = (settings.contact_email as string) ?? "milina.luxury@gmail.com";
 
   return (

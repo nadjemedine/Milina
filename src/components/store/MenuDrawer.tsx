@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { CategoryDTO } from "@/lib/types";
-import { IconClose, IconHome, IconHeart, IconBag, IconDashboard } from "./Icons";
+import { IconClose, IconHome, IconHeart, IconBag, IconDashboard, IconMail, IconFileText } from "./Icons";
 
 interface Props {
   open: boolean;
@@ -98,14 +98,14 @@ export function MenuDrawer({ open, onClose, categories }: Props) {
                 onClick={onClose}
                 className="flex items-center gap-3 rounded-md px-4 py-3 text-base font-bold transition-smooth hover:bg-neutral-50"
               >
-                Contact
+                <IconMail size={20} /> Contact
               </Link>
               <Link
                 href="/cgu"
                 onClick={onClose}
                 className="flex items-center gap-3 rounded-md px-4 py-3 text-base font-bold transition-smooth hover:bg-neutral-50"
               >
-                Conditions Générales De Vente
+                <IconFileText size={20} /> Conditions Générales
               </Link>
             </div>
           ) : (
