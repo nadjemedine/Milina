@@ -17,6 +17,7 @@ import {
   IconSearch,
   IconStore,
   IconWhatsApp,
+  IconTikTok,
 } from "@/components/store/Icons";
 import { Store as LucideStore, ShoppingCart as LucideShoppingCart } from "lucide-react";
 import { useCart } from "./CartProvider";
@@ -50,8 +51,9 @@ export function StoreChrome({ children, categories, settings }: Props) {
     (settings.instagram_url as string) ?? "https://instagram.com/milina.luxury";
   const facebookUrl =
     (settings.facebook_url as string) ?? "https://facebook.com/milina.luxury";
-  const whatsappUrl =
-    (settings.whatsapp_url as string) ?? "https://wa.me/213660989407";
+  const tiktokUrl = (settings.tiktok_url as string) ?? "https://tiktok.com/@milina.luxury";
+  const whatsappNumber = (settings.whatsapp_number as string) ?? "213660989407";
+  const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}`;
   const whatsappVisible =
     settings.whatsapp_visible !== undefined ? settings.whatsapp_visible === true || settings.whatsapp_visible === "true" : true;
 
@@ -342,6 +344,17 @@ export function StoreChrome({ children, categories, settings }: Props) {
               >
                 <IconFacebook size={18} />
               </a>
+              {tiktokUrl && (
+                <a
+                  href={tiktokUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="TikTok"
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-black text-white transition-smooth hover:scale-105"
+                >
+                  <IconTikTok size={18} />
+                </a>
+              )}
             </div>
           </div>
 

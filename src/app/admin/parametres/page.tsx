@@ -14,7 +14,8 @@ const FIELDS = [
   { key: "contact_address", label: "Adresse", type: "text" },
   { key: "instagram_url", label: "Instagram URL", type: "url" },
   { key: "facebook_url", label: "Facebook URL", type: "url" },
-  { key: "whatsapp_url", label: "WhatsApp URL (ex: https://wa.me/213xxxxxxxxx)", type: "url" },
+  { key: "tiktok_url", label: "TikTok URL", type: "url" },
+  { key: "whatsapp_number", label: "Numéro WhatsApp (ex: 213660989407)", type: "text" },
   { key: "about_text", label: "Texte 'À propos'", type: "textarea" },
 ];
 
@@ -184,7 +185,7 @@ export default function AdminSettingsPage() {
               </span>
             </div>
             <p className="mt-2 text-xs text-neutral-400">
-              L&apos;icône flottante WhatsApp s&apos;affichera en bas à droite du site lorsqu&apos;elle est activée et qu&apos;une URL WhatsApp est configurée ci-dessus.
+              L&apos;icône flottante WhatsApp s&apos;affichera en bas à droite du site lorsqu&apos;elle est activée et qu&apos;un numéro WhatsApp est configuré ci-dessus.
             </p>
           </div>
 
